@@ -1,0 +1,50 @@
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.drivool.nrs.nfcattendance.MainActivity">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/mainToolbar"/>
+
+    <RelativeLayout
+        style="@style/matchParent"
+        android:id="@+id/mainContent">
+
+        <ImageView
+           style="@style/wrapContent"
+            android:layout_centerInParent="true"
+            android:src="@drawable/circle"/>
+
+        <TextView
+            android:layout_centerInParent="true"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            style="@style/wrapContent"
+            android:text="SCAN"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/design_bottom_sheet"
+        style="@style/matchParent"
+        android:background="@color/white"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="50dp"
+        app:elevation="4dp"
+        android:elevation="20dp"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <GridView
+            android:id="@+id/bootmSheetList"
+            style="@style/wrapContent"
+            android:numColumns="2"/>
+
+    </RelativeLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

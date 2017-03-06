@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NFC Attendance</string>
+    <string name="string_bottom_sheet_behavior">string_bottom_sheet_behavior</string>
+</resources>
