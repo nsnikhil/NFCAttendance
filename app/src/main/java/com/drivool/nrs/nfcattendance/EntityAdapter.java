@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -42,8 +43,11 @@ public class EntityAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = LayoutInflater.from(mContext).inflate(R.layout.item_layout,parent,false);
         TextView name = (TextView)v.findViewById(R.id.entityName);
+        ImageView picture = (ImageView)v.findViewById(R.id.entityImage);
         EntityObject object = list.get(position);
         name.setText(object.getName());
+        picture.setImageDrawable(mContext.getResources().getDrawable(R.drawable.profile));
+        picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
         return v;
     }
 }

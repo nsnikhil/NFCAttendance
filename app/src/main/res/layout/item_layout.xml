@@ -18,6 +18,8 @@
 
         <TextView
            style="@style/wrapContent"
+            android:layout_width="match_parent"
+            android:background="@color/cardview_light_background"
             android:textSize="24sp"
             android:id="@+id/entityName"
             android:textStyle="bold"

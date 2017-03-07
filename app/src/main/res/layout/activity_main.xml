@@ -15,6 +15,7 @@
 
         <ImageView
            style="@style/wrapContent"
+            android:id="@+id/scanImage"
             android:layout_centerInParent="true"
             android:src="@drawable/circle"/>
 
@@ -22,6 +23,7 @@
             android:layout_centerInParent="true"
             android:textSize="48sp"
             android:textStyle="bold"
+            android:id="@+id/scanText"
             android:textColor="@color/white"
             style="@style/wrapContent"
             android:text="SCAN"/>
@@ -34,14 +36,25 @@
         style="@style/matchParent"
         android:background="@color/white"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="50dp"
+        app:behavior_peekHeight="?attr/actionBarSize"
         app:elevation="4dp"
         android:elevation="20dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
+       <TextView
+            android:layout_width="match_parent"
+            android:text="Temp"
+            android:id="@+id/countText"
+            android:padding="@dimen/eight"
+            android:textSize="20sp"
+            android:textColor="@color/cardview_dark_background"
+            android:gravity="center_vertical"
+            android:layout_height="?attr/actionBarSize" />
+
         <GridView
             android:id="@+id/bootmSheetList"
             style="@style/wrapContent"
+            android:layout_below="@id/countText"
             android:numColumns="2"/>
 
     </RelativeLayout>

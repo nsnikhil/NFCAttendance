@@ -12,15 +12,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     GridView bottomSheetList;
     Toolbar mainToolbar;
+    TextView countText,scanText;
+    ImageView scanImage;
+
+    int[] nfcIds = {154,158,184,161,175,185,181,101,156,178,115};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private void setAdapter() {
         ArrayList<EntityObject> list = new ArrayList<>();
         for(int i=0;i<10;i++){
-            list.add(new EntityObject("Item "+i,null,0));
+            list.add(new EntityObject("Student "+i,null,0));
         }
         EntityAdapter adapter = new EntityAdapter(getApplicationContext(),list);
         bottomSheetList.setAdapter(adapter);
@@ -55,21 +62,24 @@ public class MainActivity extends AppCompatActivity {
                 switch (newState) {
                     case BottomSheetBehavior.STATE_DRAGGING:
                         if (bottomSheetList.getFirstVisiblePosition()!=0){
-                               behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                         }
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_DRAGGING");
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_SETTLING");
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_EXPANDED");
+                        countText.setBackground(getResources().getDrawable(R.color.colorPrimary));
+                        countText.setTextColor(getResources().getColor(R.color.white));
+                        bottomSheetList.setEnabled(true);
+
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_COLLAPSED");
+                        countText.setBackground(getResources().getDrawable(R.color.cardview_light_background));
+                        countText.setTextColor(getResources().getColor(R.color.cardview_dark_background));
+                        bottomSheetList.setEnabled(false);
+
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_HIDDEN");
                         break;
                 }
             }
@@ -86,5 +96,22 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetList = (GridView)findViewById(R.id.bootmSheetList);
         mainToolbar = (Toolbar)findViewById(R.id.mainToolbar);
         setSupportActionBar(mainToolbar);
+        countText = (TextView)findViewById(R.id.countText);
+        scanText = (TextView)findViewById(R.id.scanText);
+        scanImage = (ImageView)findViewById(R.id.scanImage);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.countText:
+                break;
+            case R.id.scanText:
+            case R.id.scanImage:
+                Random random = new Random();
+                int num  = nfcIds[random.nextInt(nfcIds.length)];
+                Toast.makeText(getApplicationContext(),num+"",Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 }
