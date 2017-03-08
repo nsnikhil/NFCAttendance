@@ -1,0 +1,11 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/verticalLinearLayout"
+    tools:context="com.drivool.nrs.nfcattendance.fragments.AllList">
+
+    <GridView
+        android:id="@+id/allEntityList"
+        android:numColumns="2"
+       style="@style/matchParent"/>
+
+</LinearLayout>

@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">NFC Attendance</string>
     <string name="string_bottom_sheet_behavior">string_bottom_sheet_behavior</string>
+    <string name="drawerOpen">Open</string>
+    <string name="drawerClose">Close</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Navigation Menu Strings -->
+    <string name="navigationPresentList">Present List</string>
+    <string name="navigationAllEntities">All Entities</string>
+    <string name="navigationHistory">History</string>
+    <string name="navigationsettings">Settings</string>
+    <!-- -->
+
 </resources>

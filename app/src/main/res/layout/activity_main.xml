@@ -1,63 +1,33 @@
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/matchParent"
+    android:id="@+id/mainDrawerLayout"
+    android:fitsSystemWindows="true"
     tools:context="com.drivool.nrs.nfcattendance.MainActivity">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/mainToolbar"/>
-
     <RelativeLayout
-        style="@style/matchParent"
-        android:id="@+id/mainContent">
+        android:id="@+id/mainContainer"
+        style="@style/matchParent">
 
-        <ImageView
-           style="@style/wrapContent"
-            android:id="@+id/scanImage"
-            android:layout_centerInParent="true"
-            android:src="@drawable/circle"/>
+        <include layout="@layout/toolbar"
+            android:id="@+id/mainToolbar"/>
 
-        <TextView
-            android:layout_centerInParent="true"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            android:id="@+id/scanText"
-            android:textColor="@color/white"
-            style="@style/wrapContent"
-            android:text="SCAN"/>
+        <LinearLayout
+            android:layout_below="@id/mainToolbar"
+            android:id="@+id/fragmentContainer"
+            style="@style/verticalLinearLayout"/>
 
     </RelativeLayout>
 
-
-    <RelativeLayout
-        android:id="@+id/design_bottom_sheet"
-        style="@style/matchParent"
-        android:background="@color/white"
-        app:behavior_hideable="false"
-        app:behavior_peekHeight="?attr/actionBarSize"
-        app:elevation="4dp"
-        android:elevation="20dp"
-        app:layout_behavior="@string/bottom_sheet_behavior">
-
-       <TextView
-            android:layout_width="match_parent"
-            android:text="Temp"
-            android:id="@+id/countText"
-            android:padding="@dimen/eight"
-            android:textSize="20sp"
-            android:textColor="@color/cardview_dark_background"
-            android:gravity="center_vertical"
-            android:layout_height="?attr/actionBarSize" />
-
-        <GridView
-            android:id="@+id/bootmSheetList"
-            style="@style/wrapContent"
-            android:layout_below="@id/countText"
-            android:numColumns="2"/>
-
-    </RelativeLayout>
+    <android.support.design.widget.NavigationView
+        android:layout_width="@dimen/drawerWidth"
+        android:layout_height="match_parent"
+        android:id="@+id/mainNaviagtionView"
+        app:headerLayout="@layout/header_layout"
+        app:menu="@menu/header_items"
+        android:layout_gravity="start" />
 
 
-</android.support.design.widget.CoordinatorLayout>
+
+</android.support.v4.widget.DrawerLayout>

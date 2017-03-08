@@ -10,20 +10,17 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-/**
- * Created by Nikhil on 07-Mar-17.
- */
 
 public class TableProvider extends ContentProvider{
 
     private static final int uAllEntities = 5460;
-    private static final int uSingleEntity = 5461;
+    private static final int uSingleNfcEntity = 5462;
 
     static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName,uAllEntities);
-        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName+"/#",uSingleEntity);
+        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName+"/#",uAllEntities);
     }
 
     TableHelper helper;
@@ -43,8 +40,8 @@ public class TableProvider extends ContentProvider{
             case uAllEntities:
                 c = sdb.query(TableNames.mTableName,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
-            case uSingleEntity:
-                selection = TableNames.table1.mId +"=?";
+            case uSingleNfcEntity:
+                selection = TableNames.table1.mNfcId +"=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 c = sdb.query(TableNames.mTableName,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
@@ -88,8 +85,8 @@ public class TableProvider extends ContentProvider{
         switch (sUriMatcher.match(uri)){
             case uAllEntities:
                 return deleteVal(uri,selection,selectionArgs);
-            case uSingleEntity:
-                selection = TableNames.table1.mId +"=?";
+            case uSingleNfcEntity:
+                selection = TableNames.table1.mNfcId +"=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 return deleteVal(uri,selection,selectionArgs);
             default:

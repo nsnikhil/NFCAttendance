@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.drivool.nrs.nfcattendance.data.TableNames.table1;
+import com.drivool.nrs.nfcattendance.data.TableNames.table2;
 
 /**
  * Created by Nikhil on 07-Mar-17.
@@ -12,14 +13,26 @@ import com.drivool.nrs.nfcattendance.data.TableNames.table1;
 public class TableHelper extends SQLiteOpenHelper{
 
     private static final String mCreateTable = "CREATE TABLE " + TableNames.mTableName + " ("
-            +table1.mId + " INTEGER(6) PRIMARY KEY NOT NULL AUTO_INCREMENT, "
+            +table1.mId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             +table1.mNfcId + " INTEGER(6) NOT NULL, "
-            +table1.mBoadringTime + " DATE NOT NULL, "
-            +table1.mExitTime + " DATE NOT NULL, "
-            +table1.mDate + " DATE NOT NULL "
+            +table1.mRoLLNumber + " INTEGER(6) NOT NULL, "
+            +table1.mName + " TEXT NOT NULL, "
+            +table1.mPhoneNo + " INTEGER(6) NOT NULL, "
+            +table1.mAddress + " TEXT NOT NULL, "
+            +table1.mClass + " INTEGER NOT NULL,"
+            +table1.mPhoto + " INTEGER(6) NOT NULL"
             + ");";
 
+    private static final String mCreateScheduleTable = "CREATE TABLE " + TableNames.mTableScheduleName + " ("
+            +table2.mId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            +table2.mNfcId + " INTEGER(6) NOT NULL, "
+            +table2.mGetOnTime + " DATE NOT NULL, "
+            +table2.mGetOffTime + " DATE NOT NULL "
+            +");";
+
     private static final String mDropTable = "DROP TABLE IF EXISTS "+TableNames.mTableName;
+
+    private static final String mDropScheduleTable = "DROP TABLE IF EXISTS "+TableNames.mTableScheduleName;
 
 
     public TableHelper(Context context) {
@@ -33,11 +46,13 @@ public class TableHelper extends SQLiteOpenHelper{
 
     private void createTable(SQLiteDatabase sdb){
         sdb.execSQL(mCreateTable);
+        sdb.execSQL(mCreateScheduleTable);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(mDropTable);
+        db.execSQL(mDropScheduleTable);
         createTable(db);
     }
 }

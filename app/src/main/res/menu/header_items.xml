@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/navigationPresentList"
+        android:icon="@drawable/ic_view_list_white_48dp"
+        android:id="@+id/navigationPresent"/>
+
+    <item android:title="@string/navigationAllEntities"
+        android:icon="@drawable/ic_view_list_white_48dp"
+        android:id="@+id/navigationAll"/>
+
+    <item android:title="@string/navigationHistory"
+        android:icon="@drawable/ic_history_white_48dp"
+        android:id="@+id/navigationHistory"/>
+
+    <item android:title="@string/navigationsettings"
+        android:icon="@drawable/ic_settings_white_48dp"
+        android:id="@+id/navigationSettings"/>
+</menu>

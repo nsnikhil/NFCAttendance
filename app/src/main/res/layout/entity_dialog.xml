@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/verticalLinearLayout"
+    android:padding="@dimen/eight">
+
+    <ImageView style="@style/matchParent"
+        android:id="@+id/dialogPicture"
+        android:layout_weight="1" />
+
+    <LinearLayout style="@style/verticalLinearLayout"
+        android:layout_weight="2">
+
+        <TextView
+            style="@style/dialogText"
+            android:id="@+id/dialogName"
+            android:text="Name" />
+
+        <TextView
+            style="@style/dialogText"
+            android:id="@+id/dialogAddress"
+            android:text="Address" />
+
+        <TextView
+            style="@style/dialogText"
+            android:id="@+id/dialogPhoneNo"
+            android:text="PhoneNo" />
+
+        <TextView
+            style="@style/dialogText"
+            android:id="@+id/dialogNfcId"
+            android:text="NfcId" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
