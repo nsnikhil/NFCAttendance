@@ -20,7 +20,7 @@ public class TableProvider extends ContentProvider{
 
     static {
         sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName,uAllEntities);
-        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName+"/#",uAllEntities);
+        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName+"/#",uSingleNfcEntity);
     }
 
     TableHelper helper;

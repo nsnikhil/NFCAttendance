@@ -4,12 +4,11 @@ package com.drivool.nrs.nfcattendance.fragments;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +16,13 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.drivool.nrs.nfcattendance.EntityDialog;
 import com.drivool.nrs.nfcattendance.R;
 import com.drivool.nrs.nfcattendance.data.TableNames.table1;
 import com.drivool.nrs.nfcattendance.data.TableNames;
 
-import java.util.Calendar;
-import java.util.Random;
 
-
-public class PresentList extends Fragment {
+public class PresentList extends Fragment implements View.OnClickListener{
 
     GridView presentList;
     Button scan,endTrip;
@@ -87,17 +84,24 @@ public class PresentList extends Fragment {
         presentList = (GridView)v.findViewById(R.id.presentList);
         scan = (Button) v.findViewById(R.id.scan);
         endTrip = (Button)v.findViewById(R.id.finish);
-        scan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        scan.setOnClickListener(this);
+        endTrip.setOnClickListener(this);
     }
 
-    private int choceNum() {
-        int rnd = new Random().nextInt(nfcIds.length);
-        return nfcIds[rnd];
-    }
 
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.scan:
+                EntityDialog entityDialog = new EntityDialog();
+                Bundle args = new Bundle();
+                args.putString("urd", TableNames.mContentUri+"/"+nfcIds[1]);
+                entityDialog.setArguments(args);
+                entityDialog.show(getFragmentManager(),"dialog");
+                break;
+            case R.id.finish:
+                break;
+        }
+    }
 }

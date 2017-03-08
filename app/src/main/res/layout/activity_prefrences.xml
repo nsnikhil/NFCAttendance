@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/verticalLinearLayout"
+    tools:context="com.drivool.nrs.nfcattendance.Prefrences">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/prefToolbar"/>
+
+    <LinearLayout
+        style="@style/verticalLinearLayout"
+        android:id="@+id/prefContainer"/>
+
+</LinearLayout>

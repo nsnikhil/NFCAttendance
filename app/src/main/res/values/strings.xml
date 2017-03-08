@@ -14,4 +14,15 @@
     <string name="navigationsettings">Settings</string>
     <!-- -->
 
+    <!-- Prefrences String-->
+    <string name="temp">Temporary</string>
+    <string name="tempkey">tempkey</string>
+    <!-- -->
+
+    <!-- Title String-->
+    <string name="titleAllEntities">All Students</string>
+    <string name="titleHistory">History</string>
+    <string name="titleSettings">Settings</string>
+    <!-- -->
+
 </resources>
