@@ -24,7 +24,10 @@
     <style name="AppToolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:colorBackground">@color/white</item>
+        <item name="actionMenuTextColor">@color/white</item>
     </style>
+
 
     <style name="wrapContent">
         <item name="android:layout_width">wrap_content</item>

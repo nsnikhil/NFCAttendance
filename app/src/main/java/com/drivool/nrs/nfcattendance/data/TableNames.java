@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
 public class TableNames {
 
     public static final String mDatabaseName = "dailyRecord";
-    public static final int mDatabaseVersion = 3;
+    public static final int mDatabaseVersion = 4;
     public static final String mTableName = "attendance";
     public static final String mTableScheduleName = "schedule";
 

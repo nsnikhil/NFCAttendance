@@ -25,4 +25,9 @@
     <string name="titleSettings">Settings</string>
     <!-- -->
 
+    <!-- Menu String-->
+    <string name="menuScan">Scan</string>
+    <string name="menuFinish">End Trip</string>
+    <!-- -->
+
 </resources>

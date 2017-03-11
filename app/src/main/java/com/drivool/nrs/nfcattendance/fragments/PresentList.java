@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,10 +25,9 @@ import com.drivool.nrs.nfcattendance.data.TableNames.table1;
 import com.drivool.nrs.nfcattendance.data.TableNames;
 
 
-public class PresentList extends Fragment implements View.OnClickListener{
+public class PresentList extends Fragment {
 
     GridView presentList;
-    Button scan,endTrip;
 
     int[] nfcIds = {151,152,153,154,155,156,157,158,159,160};
 
@@ -39,6 +41,7 @@ public class PresentList extends Fragment implements View.OnClickListener{
         View v =  inflater.inflate(R.layout.fragment_present_list, container, false);
         initilize(v);
         checkTable();
+        setHasOptionsMenu(true);
         return v;
     }
 
@@ -82,26 +85,28 @@ public class PresentList extends Fragment implements View.OnClickListener{
 
     private void initilize(View v){
         presentList = (GridView)v.findViewById(R.id.presentList);
-        scan = (Button) v.findViewById(R.id.scan);
-        endTrip = (Button)v.findViewById(R.id.finish);
-        scan.setOnClickListener(this);
-        endTrip.setOnClickListener(this);
     }
 
-
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.attendance_menu,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.scan:
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menuScan:
                 EntityDialog entityDialog = new EntityDialog();
                 Bundle args = new Bundle();
                 args.putString("urd", TableNames.mContentUri+"/"+nfcIds[1]);
                 entityDialog.setArguments(args);
                 entityDialog.show(getFragmentManager(),"dialog");
                 break;
-            case R.id.finish:
+            case R.id.menuFinish:
                 break;
         }
+        return super.onOptionsItemSelected(item);
     }
+
 }
