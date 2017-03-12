@@ -9,5 +9,11 @@
         style="@style/matchParent"
         android:numColumns="2" />
 
+    <ImageView
+        style="@style/matchParent"
+        android:scaleType="centerCrop"
+        android:id="@+id/emptyState"
+        android:src="@drawable/emptystate"/>
+
 
 </RelativeLayout>

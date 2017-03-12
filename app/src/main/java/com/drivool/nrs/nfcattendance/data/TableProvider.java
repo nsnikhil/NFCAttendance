@@ -17,14 +17,15 @@ public class TableProvider extends ContentProvider{
     private static final int uSingleNfcEntity = 5462;
     private static final int uSingleEntry = 5463;
     private static final int uAllEntries = 5464;
+    private static final int uHistoryCase = 5465;
 
     static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName,uAllEntities);
         sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName+"/#",uSingleNfcEntity);
-        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableScheduleName,uSingleEntry);
-        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableScheduleName+"/#",uAllEntries);
+        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableScheduleName,uAllEntries);
+        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableScheduleName+"/#",uSingleEntry);
     }
 
     TableHelper helper;

@@ -6,7 +6,7 @@
     <ImageView
         style="@style/matchParent"
         android:scaleType="centerCrop"
-        android:src="@color/colorAccent" />
+        android:src="@drawable/headerimage" />
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/headerCircleView"

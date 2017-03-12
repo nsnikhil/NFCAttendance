@@ -28,7 +28,8 @@ public class TableHelper extends SQLiteOpenHelper{
             +table2.mNfcId + " INTEGER(6) NOT NULL, "
             +table2.mGetOnTime + " DATETIME NOT NULL, "
             +table2.mGetOffTime + " DATETIME NOT NULL "
-            +");";
+            + ");";
+
 
     private static final String mDropTable = "DROP TABLE IF EXISTS "+TableNames.mTableName;
 

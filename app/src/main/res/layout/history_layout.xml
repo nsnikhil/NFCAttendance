@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   style="@style/matchParent"
+    android:layout_height="?attr/listPreferredItemHeightLarge">
+
+    <android.support.v7.widget.CardView
+        android:layout_margin="@dimen/eight"
+        android:layout_height="?attr/listPreferredItemHeightLarge"
+        style="@style/matchParent">
+
+        <TextView
+           style="@style/matchParent"
+            android:gravity="center_vertical"
+            android:layout_margin="@dimen/sixteen"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:id="@+id/historyDate"/>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

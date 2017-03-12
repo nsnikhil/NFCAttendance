@@ -32,6 +32,16 @@
             android:id="@+id/dialogNfcId"
             android:text="NfcId" />
 
+        <TextView
+            style="@style/dialogText"
+            android:id="@+id/dialogBoardTime"
+            android:text="Boarding Time" />
+
+        <TextView
+            style="@style/dialogText"
+            android:id="@+id/dialogExitTime"
+            android:text="Exit Time" />
+
 
     </LinearLayout>
 
