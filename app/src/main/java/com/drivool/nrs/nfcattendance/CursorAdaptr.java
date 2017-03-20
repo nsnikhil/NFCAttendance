@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.drivool.nrs.nfcattendance.data.TableNames.table1;
 
 /**
@@ -33,8 +35,12 @@ public class CursorAdaptr extends CursorAdapter{
     public void bindView(View view, Context context, Cursor cursor) {
         MyViewHolder myViewHolder = (MyViewHolder) view.getTag();
         myViewHolder.name.setText(cursor.getString(cursor.getColumnIndex(table1.mName)));
-        myViewHolder.picture.setImageDrawable(context.getResources().getDrawable(R.drawable.profile));
-        myViewHolder.picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        String url = cursor.getString(cursor.getColumnIndex(table1.mPhoto));
+        Glide.with(context).load(url)
+                .centerCrop()
+                .placeholder(R.drawable.profile)
+                .crossFade()
+                .into(myViewHolder.picture);
     }
 
     public class MyViewHolder{

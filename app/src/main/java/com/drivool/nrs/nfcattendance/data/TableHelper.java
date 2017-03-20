@@ -14,20 +14,20 @@ public class TableHelper extends SQLiteOpenHelper{
 
     private static final String mCreateTable = "CREATE TABLE " + TableNames.mTableName + " ("
             +table1.mId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            +table1.mNfcId + " INTEGER(6) NOT NULL, "
-            +table1.mRoLLNumber + " INTEGER(6) NOT NULL, "
+            +table1.mNfcId + " TEXT NOT NULL, "
+            +table1.mRoLLNumber + " INTEGER NOT NULL, "
             +table1.mName + " TEXT NOT NULL, "
-            +table1.mPhoneNo + " INTEGER(6) NOT NULL, "
+            +table1.mPhoneNo + " TEXT NOT NULL, "
             +table1.mAddress + " TEXT NOT NULL, "
-            +table1.mClass + " INTEGER NOT NULL,"
-            +table1.mPhoto + " INTEGER(6) NOT NULL"
+            +table1.mClass + " TEXT NOT NULL,"
+            +table1.mPhoto + " TEXT NOT NULL"
             + ");";
 
     private static final String mCreateScheduleTable = "CREATE TABLE " + TableNames.mTableScheduleName + " ("
             +table2.mId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            +table2.mNfcId + " INTEGER(6) NOT NULL, "
-            +table2.mGetOnTime + " DATETIME NOT NULL, "
-            +table2.mGetOffTime + " DATETIME NOT NULL "
+            +table2.mNfcId + " TEXT NOT NULL, "
+            +table2.mGetOnTime + " TEXT NOT NULL, "
+            +table2.mGetOffTime + " TEXT NOT NULL "
             + ");";
 
 

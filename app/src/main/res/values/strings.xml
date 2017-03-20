@@ -44,4 +44,10 @@
     <string name="menuFinish">End Trip</string>
     <!-- -->
 
+    <!-- Url-->
+    <string name="urlServer">http://ec2-35-154-208-1.ap-south-1.compute.amazonaws.com/</string>
+    <string name="urlAllEntity">queryNFCAll.php</string>
+    <string name="urlSingleEntity">queryNFCSingle.php</string>
+    <!-- -->
+
 </resources>
