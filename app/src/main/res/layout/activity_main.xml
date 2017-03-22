@@ -26,8 +26,10 @@
         android:id="@+id/mainNaviagtionView"
         app:headerLayout="@layout/header_layout"
         app:menu="@menu/header_items"
+        app:itemIconTint="@drawable/navselector"
+        app:itemTextColor="@drawable/navselector"
+        app:itemBackground="@android:color/transparent"
         android:layout_gravity="start" />
-
 
 
 </android.support.v4.widget.DrawerLayout>

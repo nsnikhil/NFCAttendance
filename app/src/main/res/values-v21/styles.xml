@@ -5,11 +5,12 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="android:elevation">@dimen/toolbarElevation</item>
-        <item name="android:background">@drawable/toolbargradeint</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="tranparentStatusBar" parent="AppTheme">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
+
 </resources>

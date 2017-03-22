@@ -1,4 +1,4 @@
-package com.drivool.nrs.nfcattendance;
+package com.drivool.nrs.nfcattendance.Adapter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,16 +8,17 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.drivool.nrs.nfcattendance.R;
 import com.drivool.nrs.nfcattendance.data.TableNames.table1;
 
-/**
- * Created by sid on 8/3/17.
- */
+import java.io.File;
 
 public class CursorAdaptr extends CursorAdapter{
 
+    private static final String mFolderName = "profilepic";
 
     public CursorAdaptr(Context context, Cursor c) {
         super(context, c);
@@ -35,8 +36,14 @@ public class CursorAdaptr extends CursorAdapter{
     public void bindView(View view, Context context, Cursor cursor) {
         MyViewHolder myViewHolder = (MyViewHolder) view.getTag();
         myViewHolder.name.setText(cursor.getString(cursor.getColumnIndex(table1.mName)));
-        String url = cursor.getString(cursor.getColumnIndex(table1.mPhoto));
-        Glide.with(context).load(url)
+        setPicture(context,cursor.getString(cursor.getColumnIndex(table1.mPhoto)),myViewHolder);
+    }
+
+    private void setPicture(Context c,String pic,MyViewHolder myViewHolder){
+        File folder = c.getExternalFilesDir(mFolderName);
+        File f = new File(folder,pic);
+        Glide.with(c)
+                .load(f)
                 .centerCrop()
                 .placeholder(R.drawable.profile)
                 .crossFade()

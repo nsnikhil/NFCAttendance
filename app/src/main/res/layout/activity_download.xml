@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/matchParent"
+    tools:context="com.drivool.nrs.nfcattendance.DownloadActivity">
+
+    <LinearLayout
+        style="@style/wrapContent"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+    <TextView
+        style="@style/wrapContent"
+        android:fontFamily="sans-serif-light"
+        android:padding="@dimen/sixteen"
+        android:textSize="24sp"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:text="Downloading Database"/>
+
+    <ProgressBar
+        style="@android:style/Widget.DeviceDefault.ProgressBar.Large"
+        android:id="@+id/downladProgress"
+        android:layout_width="wrap_content"
+        android:padding="@dimen/sixteen"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>

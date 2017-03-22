@@ -20,7 +20,9 @@ import com.drivool.nrs.nfcattendance.data.TableHelper;
 import com.drivool.nrs.nfcattendance.data.TableNames;
 import com.drivool.nrs.nfcattendance.data.TableNames.table1;
 import com.drivool.nrs.nfcattendance.data.TableNames.table2;
+import com.drivool.nrs.nfcattendance.data.TableNames.tabletemp;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,6 +32,7 @@ public class EntityDialog extends android.support.v4.app.DialogFragment{
 
     ImageView picture;
     TextView name,phoneno,address,nfcId,boardtime,endTime;
+    private static final String mFolderName = "profilepic";
 
 
     @Override
@@ -53,16 +56,16 @@ public class EntityDialog extends android.support.v4.app.DialogFragment{
 
     private void query(String aNfcId){
         SQLiteDatabase sqb = new TableHelper(getActivity()).getReadableDatabase();
-        String rawQuery = "SELECT * FROM "+ TableNames.mTableName +" INNER JOIN "+ TableNames.mTableScheduleName +" ON " + table1.mNfcId+ " = " + table2.mNfcId + " WHERE " + table1.mNfcId+"=?";
+        String rawQuery = "SELECT * FROM "+ TableNames.mTableTempName +" INNER JOIN "+ TableNames.mTableScheduleName +" ON " + tabletemp.mNfcId+ " = " + table2.mNfcId + " WHERE " + tabletemp.mNfcId+"=?";
         Cursor c = sqb.rawQuery(rawQuery,new String[]{aNfcId});
         if(c.moveToLast()){
-            String nm = c.getString(c.getColumnIndex(table1.mName));
-            String phn = c.getString(c.getColumnIndex(table1.mPhoneNo));
-            String adr = c.getString(c.getColumnIndex(table1.mAddress));
-            String nfcId = c.getString(c.getColumnIndex(table1.mNfcId));
+            String nm = c.getString(c.getColumnIndex(tabletemp.mName));
+            String phn = c.getString(c.getColumnIndex(tabletemp.mPhoneNo));
+            String adr = c.getString(c.getColumnIndex(tabletemp.mAddress));
+            String nfcId = c.getString(c.getColumnIndex(tabletemp.mNfcId));
             String bTime = c.getString(c.getColumnIndex(TableNames.table2.mGetOnTime));
             String eTime = c.getString(c.getColumnIndex(table2.mGetOffTime));
-            String picUrl  =c.getString(c.getColumnIndex(table1.mPhoto));
+            String picUrl  =c.getString(c.getColumnIndex(tabletemp.mPhoto));
             setValues(nm,phn,adr,nfcId,bTime,eTime,picUrl);
         }
     }
@@ -78,7 +81,14 @@ public class EntityDialog extends android.support.v4.app.DialogFragment{
         }else {
             endTime.setText("End time : "+endTm);
         }
-        Glide.with(getActivity()).load(url)
+        setPicture(url);
+    }
+
+    private void setPicture(String pic){
+        File folder = getActivity().getExternalFilesDir(mFolderName);
+        File f = new File(folder,pic);
+        Glide.with(this)
+                .load(f)
                 .centerCrop()
                 .placeholder(R.drawable.profile)
                 .crossFade()

@@ -15,17 +15,24 @@ public class TableProvider extends ContentProvider{
 
     private static final int uAllEntities = 5460;
     private static final int uSingleNfcEntity = 5462;
+
     private static final int uSingleEntry = 5463;
     private static final int uAllEntries = 5464;
-    private static final int uHistoryCase = 5465;
+
+    private static final int uAllTempEntities = 5465;
+    private static final int uSingleTempEntity = 5466;
 
     static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName,uAllEntities);
-        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName+"/#",uSingleNfcEntity);
+        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName+"/*",uSingleNfcEntity);
+
+        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableTempName,uAllTempEntities);
+        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableTempName+"/*",uSingleTempEntity);
+
         sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableScheduleName,uAllEntries);
-        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableScheduleName+"/#",uSingleEntry);
+        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableScheduleName+"/*",uSingleEntry);
     }
 
     TableHelper helper;
@@ -47,15 +54,23 @@ public class TableProvider extends ContentProvider{
                 break;
             case uSingleNfcEntity:
                 selection = TableNames.table1.mNfcId +"=?";
-                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
                 c = sdb.query(TableNames.mTableName,projection,selection,selectionArgs,null,null,sortOrder);
+                break;
+            case uAllTempEntities:
+                c = sdb.query(TableNames.mTableTempName,projection,selection,selectionArgs,null,null,sortOrder);
+                break;
+            case uSingleTempEntity:
+                selection = TableNames.tabletemp.mNfcId +"=?";
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
+                c = sdb.query(TableNames.mTableTempName,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
             case uAllEntries:
                 c = sdb.query(TableNames.mTableScheduleName,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
             case uSingleEntry:
                 selection = TableNames.table2.mNfcId +"=?";
-                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
                 c = sdb.query(TableNames.mTableScheduleName,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
             default:
@@ -79,6 +94,8 @@ public class TableProvider extends ContentProvider{
                 return insertEntity(uri,values,TableNames.mTableName);
             case uAllEntries:
                 return insertEntity(uri,values,TableNames.mTableScheduleName);
+            case uAllTempEntities:
+                return insertEntity(uri,values,TableNames.mTableTempName);
             default:
                 throw new IllegalArgumentException("Invalid Uri : "+uri);
         }
@@ -102,13 +119,19 @@ public class TableProvider extends ContentProvider{
                 return deleteVal(uri,selection,selectionArgs,TableNames.mTableName);
             case uSingleNfcEntity:
                 selection = TableNames.table1.mNfcId +"=?";
-                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
                 return deleteVal(uri,selection,selectionArgs,TableNames.mTableName);
+            case uAllTempEntities:
+                return deleteVal(uri,selection,selectionArgs,TableNames.mTableTempName);
+            case uSingleTempEntity:
+                selection = TableNames.tabletemp.mNfcId +"=?";
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
+                return deleteVal(uri,selection,selectionArgs,TableNames.mTableTempName);
             case uAllEntries:
                 return deleteVal(uri,selection,selectionArgs,TableNames.mTableScheduleName);
             case uSingleEntry:
                 selection = TableNames.table2.mNfcId +"=?";
-                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
                 return deleteVal(uri,selection,selectionArgs,TableNames.mTableScheduleName);
             default:
                 throw new IllegalArgumentException("Invalid Uri : "+uri);
@@ -128,6 +151,38 @@ public class TableProvider extends ContentProvider{
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        switch (sUriMatcher.match(uri)){
+            case uAllEntities:
+                return updateVal(uri,values,selection,selectionArgs,TableNames.mTableName);
+            case uSingleNfcEntity:
+                selection = TableNames.table1.mNfcId +"=?";
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
+                return updateVal(uri,values,selection,selectionArgs,TableNames.mTableName);
+            case uAllTempEntities:
+                return updateVal(uri,values,selection,selectionArgs,TableNames.mTableTempName);
+            case uSingleTempEntity:
+                selection = TableNames.tabletemp.mNfcId +"=?";
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
+                return updateVal(uri,values,selection,selectionArgs,TableNames.mTableTempName);
+            case uAllEntries:
+                return updateVal(uri,values,selection,selectionArgs,TableNames.mTableScheduleName);
+            case uSingleEntry:
+                selection = TableNames.table2.mNfcId +"=?";
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
+                return updateVal(uri,values,selection,selectionArgs,TableNames.mTableScheduleName);
+            default:
+                throw new IllegalArgumentException("Invalid Uri : "+uri);
+        }
+    }
+
+    private int updateVal(Uri u,ContentValues cv,String sel,String selArgs[],String tableName){
+        SQLiteDatabase sdb = helper.getWritableDatabase();
+        int count = sdb.update(tableName,cv,sel,selArgs);
+        if(count==0){
+            return 0;
+        }else {
+            getContext().getContentResolver().notifyChange(u,null);
+            return count;
+        }
     }
 }
