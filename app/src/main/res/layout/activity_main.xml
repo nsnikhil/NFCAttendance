@@ -4,6 +4,7 @@
     style="@style/matchParent"
     android:id="@+id/mainDrawerLayout"
     android:fitsSystemWindows="true"
+    android:background="@color/colorBackground"
     tools:context="com.drivool.nrs.nfcattendance.MainActivity">
 
     <RelativeLayout
@@ -26,9 +27,6 @@
         android:id="@+id/mainNaviagtionView"
         app:headerLayout="@layout/header_layout"
         app:menu="@menu/header_items"
-        app:itemIconTint="@drawable/navselector"
-        app:itemTextColor="@drawable/navselector"
-        app:itemBackground="@android:color/transparent"
         android:layout_gravity="start" />
 
 

@@ -1,6 +1,6 @@
 package com.drivool.nrs.nfcattendance;
 
-import android.app.Fragment;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -9,29 +9,24 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drivool.nrs.nfcattendance.data.TableNames;
@@ -57,16 +52,19 @@ public class MainActivity extends AppCompatActivity {
     android.support.v4.app.Fragment historyList;
     android.support.v4.app.Fragment allList;
     private static final int mNfcRequestCode = 154;
+    PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addOnConnection();
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setTheme(R.style.tranparentStatusBar);
+        }
         setContentView(R.layout.activity_main);
         initilize();
         checkNfc();
         initilizeDrawer();
-        addFragments(savedInstanceState);
+        addOnConnection(savedInstanceState);
     }
 
     private void checkFirst() {
@@ -82,21 +80,22 @@ public class MainActivity extends AppCompatActivity {
         return isConnected;
     }
 
-    private void addOnConnection() {
+    private void addOnConnection(Bundle savedInstanceState) {
         if (checkConnection()) {
             checkFirst();
+            addFragments(savedInstanceState);
         } else {
-            removeOffConnection();
+            removeOffConnection(savedInstanceState);
         }
     }
 
-    private void removeOffConnection() {
-        Snackbar.make(mainContainer, "No Internet", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
+    private void removeOffConnection(final Bundle s) {
+        Snackbar.make(fragmentContainer, "No Internet", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addOnConnection();
+                addOnConnection(s);
             }
-        }).show();
+        }).setActionTextColor(getResources().getColor(R.color.white)).show();
     }
 
     private void addFragments(Bundle savedInstanceState) {
@@ -118,15 +117,28 @@ public class MainActivity extends AppCompatActivity {
     private void checkNfc() {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
-            Snackbar.make(mainContainer, "Nfc Unavaialble", BaseTransientBottomBar.LENGTH_INDEFINITE).show();
+            Snackbar.make(fragmentContainer, "Nfc Unavaialble", BaseTransientBottomBar.LENGTH_INDEFINITE).setActionTextColor(getResources().getColor(R.color.white)).show();
         } else if (!mNfcAdapter.isEnabled()) {
-            Snackbar.make(mainContainer, "Nfc Disabled", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Turn On", new View.OnClickListener() {
+            Snackbar.make(fragmentContainer, "Nfc Disabled", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Turn On", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivityForResult(new Intent(Settings.ACTION_NFC_SETTINGS), mNfcRequestCode);
                 }
-            });
+            }).setActionTextColor(getResources().getColor(R.color.white)).show();
         }
+        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mNfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mNfcAdapter.disableForegroundDispatch(this);
     }
 
     @Override
@@ -261,6 +273,10 @@ public class MainActivity extends AppCompatActivity {
                         ft.show(historyList);
                         drawerAction(2);
                         break;
+                    case R.id.navigationAdmin:
+                        mDrawerLayout.closeDrawers();
+                        startActivity(new Intent(MainActivity.this, NewUser.class));
+                        break;
                     case R.id.navigationSettings:
                         mDrawerLayout.closeDrawers();
                         startActivity(new Intent(MainActivity.this, Prefrences.class));
@@ -292,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
                 menuHistory.setChecked(true);
                 getSupportActionBar().setTitle(getResources().getString(R.string.titleHistory));
                 break;
-
         }
     }
 }

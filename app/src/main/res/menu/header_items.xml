@@ -12,6 +12,10 @@
         android:icon="@drawable/ic_history_white_48dp"
         android:id="@+id/navigationHistory"/>
 
+    <item android:title="@string/navigationAdmin"
+        android:icon="@drawable/ic_star_black_48dp"
+        android:id="@+id/navigationAdmin"/>
+
     <item android:title="@string/navigationsettings"
         android:icon="@drawable/ic_settings_white_48dp"
         android:id="@+id/navigationSettings"/>

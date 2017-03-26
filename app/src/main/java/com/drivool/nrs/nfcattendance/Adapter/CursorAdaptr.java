@@ -40,10 +40,9 @@ public class CursorAdaptr extends CursorAdapter{
     }
 
     private void setPicture(Context c,String pic,MyViewHolder myViewHolder){
-        File folder = c.getExternalFilesDir(mFolderName);
-        File f = new File(folder,pic);
+        String url = c.getResources().getString(R.string.urlBucketHost)+c.getResources().getString(R.string.urlBucketName)+"/"+pic+".jpg";
         Glide.with(c)
-                .load(f)
+                .load(url)
                 .centerCrop()
                 .placeholder(R.drawable.profile)
                 .crossFade()

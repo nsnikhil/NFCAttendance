@@ -6,10 +6,20 @@
     <string name="sqlDateTimeFormat" translatable="false">yyyy-MM-dd HH:mm:ss</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="addentity">Add Entity</string>
 
     <!-- Dates Predefined-->
     <string name="dateToday">Today</string>
     <string name="dateYesterday">Yesterday</string>
+    <!-- -->
+
+    <!-- entityObject-->
+    <string name="entityname">Name</string>
+    <string name="entityaddress">Address</string>
+    <string name="entityphoneno">Phone No</string>
+    <string name="entityclass">Class</string>
+    <string name="entitynfcid">NFC Id</string>
+    <string name="entityroll">Roll No</string>
     <!-- -->
 
     <!-- Bundle Keys-->
@@ -26,6 +36,7 @@
     <string name="navigationAllEntities">All Entities</string>
     <string name="navigationHistory">History</string>
     <string name="navigationsettings">Settings</string>
+    <string name="navigationAdmin">Admin Access</string>
     <!-- -->
 
     <!-- Prefrences String-->
@@ -37,6 +48,7 @@
     <string name="titleAllEntities">All Students</string>
     <string name="titleHistory">History</string>
     <string name="titleSettings">Settings</string>
+    <string name="titleAdmin">Admin</string>
     <!-- -->
 
     <!-- Menu String-->
@@ -52,7 +64,11 @@
     <string name="urlScheduleNfc">queryNFCschdeuleNfc.php</string>
     <string name="urlScheduleDate">queryNFCschdeuleDate.php</string>
     <string name="urlInsertSchedule">insertNfcSchedule.php</string>
+    <string name="urlBucketHost">https://s3-ap-northeast-1.amazonaws.com/</string>
+    <string name="urlBucketName">nfcattensnimages</string>
+    <string name="urlInsertNew">insertNFCnew.php</string>
     <!-- -->
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

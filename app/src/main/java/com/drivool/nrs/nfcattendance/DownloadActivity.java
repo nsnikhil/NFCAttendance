@@ -92,7 +92,9 @@ public class DownloadActivity extends AppCompatActivity {
                 String address = entity.getString("studentaddress");
                 String phoneno = entity.getString("studentphoneno");
                 String cls = entity.getString("studentclass");
+
                 String photo = entity.getString("studentphoto");
+
                 if (address.indexOf('\\') != -1) {
                     address.replaceAll("\\/", "/");
                 }
@@ -105,9 +107,12 @@ public class DownloadActivity extends AppCompatActivity {
                 cv.put(TableNames.table1.mAddress, address);
                 cv.put(TableNames.table1.mPhoneNo, phoneno);
                 cv.put(TableNames.table1.mClass, cls);
-                String filename = nfcId+"profile"+".jpg";
+
+                String filename = nfcId+".jpg";
                 cv.put(TableNames.table1.mPhoto, filename);
-                new DownloadImage().execute(photo,filename);
+                String url = getResources().getString(R.string.urlBucketHost)+getResources().getString(R.string.urlBucketName)+"/"+nfcId+".jpg";
+                new DownloadImage().execute(url,filename);
+
                 getContentResolver().insert(TableNames.mContentUri, cv);
             }
         }else {

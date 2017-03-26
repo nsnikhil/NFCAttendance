@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/matchParent"
+    android:background="@color/colorBackground"
     tools:context="com.drivool.nrs.nfcattendance.fragments.PresentList">
 
 

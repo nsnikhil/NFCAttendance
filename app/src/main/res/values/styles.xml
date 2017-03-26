@@ -1,10 +1,10 @@
 <resources>
 
-
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
     <style name="matchParent">
@@ -24,7 +24,6 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="android:colorBackground">@color/white</item>
-        <item name="actionMenuTextColor">@color/white</item>
     </style>
 
 
@@ -44,7 +43,7 @@
     <style name="toolbar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">@drawable/toolbargradeint</item>
     </style>
 
     <style name="fab">
@@ -66,16 +65,12 @@
     <style name="headerImage">
         <item name="android:layout_width">@dimen/headerCircleImage</item>
         <item name="android:layout_height">@dimen/headerCircleImage</item>
-        <item name="android:layout_marginLeft">@dimen/sixteen</item>
-        <item name="android:layout_marginTop">40dp</item>
-        <item name="android:layout_centerVertical">true</item>
     </style>
 
 
     <style name="headerText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_centerVertical">true</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:layout_marginLeft">@dimen/sixteen</item>
         <item name="android:textSize">18sp</item>
@@ -85,6 +80,13 @@
 
     <style name="naviagtionDivider">
         <item name="android:listDivider">@color/white</item>
+    </style>
+
+    <style name="newEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/eight</item>
+        <item name="android:padding">@dimen/eight</item>
     </style>
 
 </resources>

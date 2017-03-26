@@ -1,0 +1,153 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/verticalLinearLayout"
+    android:background="@color/colorBackground"
+    android:id="@+id/newEntityContainer"
+    tools:context="com.drivool.nrs.nfcattendance.NewUser">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/newUserToolbar"/>
+
+    <android.support.v4.widget.NestedScrollView style="@style/matchParent"
+        android:layout_below="@id/newUserToolbar">
+
+        <LinearLayout style="@style/verticalLinearLayout">
+
+            <ImageView
+                android:id="@+id/newEntityImage"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginBottom="@dimen/sixteen"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile" />
+
+            <LinearLayout
+                style="@style/horizontalLinearLayout"
+                android:padding="@dimen/eight"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="@dimen/eight"
+                    android:tint="@color/colorAccent"
+                    android:src="@drawable/ic_person_black_48dp" />
+
+                <EditText
+                    android:id="@+id/newEntityName"
+                    style="@style/newEditText"
+                    android:hint="@string/entityname" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/horizontalLinearLayout"
+                android:padding="@dimen/eight"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:padding="@dimen/eight"
+                    android:layout_height="48dp"
+                    android:tint="@color/colorAccent"
+                    android:src="@drawable/ic_info_outline_black_48dp" />
+
+                <EditText
+                    android:id="@+id/newEntityRoll"
+                    style="@style/newEditText"
+                    android:hint="@string/entityroll"
+                    android:inputType="number" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/horizontalLinearLayout"
+                android:padding="@dimen/eight"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="@dimen/eight"
+                    android:tint="@color/colorAccent"
+                    android:src="@drawable/ic_home_black_48dp" />
+
+                <EditText
+                    android:id="@+id/newEntityAddress"
+                    style="@style/newEditText"
+                    android:hint="@string/entityaddress" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/horizontalLinearLayout"
+                android:padding="@dimen/eight"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="@dimen/eight"
+                    android:tint="@color/colorAccent"
+                    android:src="@drawable/ic_phone_black_48dp" />
+
+                <EditText
+                    android:id="@+id/newEntityPhone"
+                    style="@style/newEditText"
+                    android:hint="@string/entityphoneno"
+                    android:inputType="phone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/horizontalLinearLayout"
+                android:padding="@dimen/eight"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:padding="@dimen/eight"
+                    android:layout_height="48dp"
+                    android:tint="@color/colorAccent"
+                    android:src="@drawable/ic_class_black_48dp" />
+
+                <EditText
+                    android:id="@+id/newEntityClass"
+                    style="@style/newEditText"
+                    android:hint="@string/entityclass" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/horizontalLinearLayout"
+                android:padding="@dimen/eight"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="@dimen/eight"
+                    android:tint="@color/colorAccent"
+                    android:src="@drawable/ic_nfc_black_48dp" />
+
+                <TextView
+                    android:id="@+id/newEntityNfcId"
+                    style="@style/newEditText"
+                    android:text="@string/entitynfcid"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/newEntitySave"
+        style="@style/fab"
+        android:src="@drawable/ic_cloud_done_white_48dp"
+        app:fabSize="normal" />
+
+
+</RelativeLayout>
