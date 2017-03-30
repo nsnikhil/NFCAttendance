@@ -7,25 +7,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.drivool.nrs.nfcattendance.Adapter.HistoryAdaptr;
+import com.drivool.nrs.nfcattendance.Adapter.HistoryAdapter;
 import com.drivool.nrs.nfcattendance.R;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class HistoryList extends Fragment {
+public class HistoryListFragment extends Fragment {
 
 
-    ListView historyList;
+    ListView mHistoryList;
 
-    public HistoryList() {
+    public HistoryListFragment() {
 
     }
 
@@ -39,7 +37,7 @@ public class HistoryList extends Fragment {
     }
 
     private void initilize(View v) {
-        historyList = (ListView)v.findViewById(R.id.historyList);
+        mHistoryList = (ListView)v.findViewById(R.id.historyList);
     }
 
     private void getListItems(){
@@ -55,9 +53,9 @@ public class HistoryList extends Fragment {
                 dates.add(simpleDateFormat.format(calendar.getTime()));
             }
         }
-        HistoryAdaptr adapter = new HistoryAdaptr(getActivity(),dates);
-        historyList.setAdapter(adapter);
-        historyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        HistoryAdapter adapter = new HistoryAdapter(getActivity(),dates);
+        mHistoryList.setAdapter(adapter);
+        mHistoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getActivity(),"Will show history for "+parent.getItemAtPosition(position).toString(),Toast.LENGTH_LONG).show();

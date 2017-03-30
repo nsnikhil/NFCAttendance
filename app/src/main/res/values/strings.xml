@@ -39,7 +39,7 @@
     <string name="navigationAdmin">Admin Access</string>
     <!-- -->
 
-    <!-- Prefrences String-->
+    <!-- PrefrencesActivity String-->
     <string name="temp">Temporary</string>
     <string name="tempkey">tempkey</string>
     <!-- -->

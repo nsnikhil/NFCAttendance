@@ -28,8 +28,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.drivool.nrs.nfcattendance.Adapter.CursorAdaptr;
-import com.drivool.nrs.nfcattendance.EntityDialog;
+import com.drivool.nrs.nfcattendance.Adapter.CursAdapter;
+import com.drivool.nrs.nfcattendance.fragments.dialog.EntityDialogFragment;
 import com.drivool.nrs.nfcattendance.R;
 import com.drivool.nrs.nfcattendance.data.TableNames.tabletemp;
 import com.drivool.nrs.nfcattendance.data.TableNames;
@@ -37,14 +37,14 @@ import com.drivool.nrs.nfcattendance.data.TableNames;
 import java.util.Calendar;
 
 
-public class PresentList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class PresentListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    GridView presentList;
+    GridView mPresentList;
     private static final int mPresentLoaderId = 1;
-    CursorAdaptr cusrAdaptr;
-    ImageView emptyState;
+    CursAdapter mCusrAdaptr;
+    ImageView mEmptyState;
 
-    public PresentList() {
+    public PresentListFragment() {
 
     }
 
@@ -53,24 +53,24 @@ public class PresentList extends Fragment implements LoaderManager.LoaderCallbac
         View v = inflater.inflate(R.layout.fragment_present_list, container, false);
         initilize(v);
         setHasOptionsMenu(true);
-        cusrAdaptr = new CursorAdaptr(getActivity(), null);
-        presentList.setAdapter(cusrAdaptr);
+        mCusrAdaptr = new CursAdapter(getActivity(), null);
+        mPresentList.setAdapter(mCusrAdaptr);
         loadfData();
         return v;
     }
 
     private void initilize(View v) {
-        presentList = (GridView) v.findViewById(R.id.presentList);
-        emptyState = (ImageView) v.findViewById(R.id.emptyState);
-        presentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mPresentList = (GridView) v.findViewById(R.id.presentList);
+        mEmptyState = (ImageView) v.findViewById(R.id.emptyState);
+        mPresentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor c = (Cursor) parent.getItemAtPosition(position);
                 Bundle args = new Bundle();
                 args.putString(getActivity().getResources().getString(R.string.bundleSelctn), c.getString(c.getColumnIndex(tabletemp.mNfcId)));
-                EntityDialog entityDialog = new EntityDialog();
-                entityDialog.setArguments(args);
-                entityDialog.show(getFragmentManager(), "dialog");
+                EntityDialogFragment entityDialogFragment = new EntityDialogFragment();
+                entityDialogFragment.setArguments(args);
+                entityDialogFragment.show(getFragmentManager(), "dialog");
             }
         });
     }
@@ -165,13 +165,13 @@ public class PresentList extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        cusrAdaptr.swapCursor(data);
+        mCusrAdaptr.swapCursor(data);
         checkEmpty(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        cusrAdaptr.swapCursor(null);
+        mCusrAdaptr.swapCursor(null);
     }
 
     private void loadfData() {
@@ -184,9 +184,9 @@ public class PresentList extends Fragment implements LoaderManager.LoaderCallbac
 
     private void checkEmpty(Cursor c) {
         if (c.getCount() == 0) {
-            emptyState.setVisibility(View.VISIBLE);
+            mEmptyState.setVisibility(View.VISIBLE);
         } else {
-            emptyState.setVisibility(View.GONE);
+            mEmptyState.setVisibility(View.GONE);
         }
     }
 }

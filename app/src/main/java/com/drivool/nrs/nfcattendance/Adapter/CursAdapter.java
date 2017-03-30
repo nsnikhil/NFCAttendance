@@ -16,11 +16,11 @@ import com.drivool.nrs.nfcattendance.data.TableNames.table1;
 
 import java.io.File;
 
-public class CursorAdaptr extends CursorAdapter{
+public class CursAdapter extends android.widget.CursorAdapter {
 
     private static final String mFolderName = "profilepic";
 
-    public CursorAdaptr(Context context, Cursor c) {
+    public CursAdapter(Context context, Cursor c) {
         super(context, c);
     }
 

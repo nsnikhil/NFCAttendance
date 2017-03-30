@@ -1,15 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/newEntityContainer"
     style="@style/verticalLinearLayout"
     android:background="@color/colorBackground"
-    android:id="@+id/newEntityContainer"
-    tools:context="com.drivool.nrs.nfcattendance.NewUser">
+    tools:context="com.drivool.nrs.nfcattendance.NewUserActivity">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/newUserToolbar"/>
+    <include
+        android:id="@+id/newUserToolbar"
+        layout="@layout/toolbar" />
 
-    <android.support.v4.widget.NestedScrollView style="@style/matchParent"
+    <android.support.v4.widget.NestedScrollView
+        style="@style/matchParent"
         android:layout_below="@id/newUserToolbar">
 
         <LinearLayout style="@style/verticalLinearLayout">
@@ -24,113 +26,143 @@
 
             <LinearLayout
                 style="@style/horizontalLinearLayout"
-                android:padding="@dimen/eight"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="@dimen/eight">
 
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:padding="@dimen/eight"
-                    android:tint="@color/colorAccent"
-                    android:src="@drawable/ic_person_black_48dp" />
+                    android:src="@drawable/ic_person_black_48dp"
+                    android:tint="@color/colorAccent" />
 
-                <EditText
-                    android:id="@+id/newEntityName"
-                    style="@style/newEditText"
-                    android:hint="@string/entityname" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/newEntityName"
+                        style="@style/newEditText"
+                        android:hint="@string/entityname" />
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
             <LinearLayout
                 style="@style/horizontalLinearLayout"
-                android:padding="@dimen/eight"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="@dimen/eight">
 
                 <ImageView
                     android:layout_width="48dp"
-                    android:padding="@dimen/eight"
                     android:layout_height="48dp"
-                    android:tint="@color/colorAccent"
-                    android:src="@drawable/ic_info_outline_black_48dp" />
+                    android:padding="@dimen/eight"
+                    android:src="@drawable/ic_info_outline_black_48dp"
+                    android:tint="@color/colorAccent" />
 
-                <EditText
-                    android:id="@+id/newEntityRoll"
-                    style="@style/newEditText"
-                    android:hint="@string/entityroll"
-                    android:inputType="number" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/newEntityRoll"
+                        style="@style/newEditText"
+                        android:hint="@string/entityroll"
+                        android:inputType="number" />
+
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
             <LinearLayout
                 style="@style/horizontalLinearLayout"
-                android:padding="@dimen/eight"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="@dimen/eight">
 
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:padding="@dimen/eight"
-                    android:tint="@color/colorAccent"
-                    android:src="@drawable/ic_home_black_48dp" />
+                    android:src="@drawable/ic_home_black_48dp"
+                    android:tint="@color/colorAccent" />
 
-                <EditText
-                    android:id="@+id/newEntityAddress"
-                    style="@style/newEditText"
-                    android:hint="@string/entityaddress" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/newEntityAddress"
+                        style="@style/newEditText"
+                        android:hint="@string/entityaddress" />
+
+                </android.support.design.widget.TextInputLayout>
 
 
             </LinearLayout>
 
             <LinearLayout
                 style="@style/horizontalLinearLayout"
-                android:padding="@dimen/eight"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="@dimen/eight">
 
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:padding="@dimen/eight"
-                    android:tint="@color/colorAccent"
-                    android:src="@drawable/ic_phone_black_48dp" />
+                    android:src="@drawable/ic_phone_black_48dp"
+                    android:tint="@color/colorAccent" />
 
-                <EditText
-                    android:id="@+id/newEntityPhone"
-                    style="@style/newEditText"
-                    android:hint="@string/entityphoneno"
-                    android:inputType="phone" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/newEntityPhone"
+                        style="@style/newEditText"
+                        android:hint="@string/entityphoneno"
+                        android:inputType="phone" />
+
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
             <LinearLayout
                 style="@style/horizontalLinearLayout"
-                android:padding="@dimen/eight"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="@dimen/eight">
 
                 <ImageView
                     android:layout_width="48dp"
-                    android:padding="@dimen/eight"
                     android:layout_height="48dp"
-                    android:tint="@color/colorAccent"
-                    android:src="@drawable/ic_class_black_48dp" />
+                    android:padding="@dimen/eight"
+                    android:src="@drawable/ic_class_black_48dp"
+                    android:tint="@color/colorAccent" />
 
-                <EditText
-                    android:id="@+id/newEntityClass"
-                    style="@style/newEditText"
-                    android:hint="@string/entityclass" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/newEntityClass"
+                        style="@style/newEditText"
+                        android:hint="@string/entityclass" />
+
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
             <LinearLayout
                 style="@style/horizontalLinearLayout"
-                android:padding="@dimen/eight"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="@dimen/eight">
 
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:padding="@dimen/eight"
-                    android:tint="@color/colorAccent"
-                    android:src="@drawable/ic_nfc_black_48dp" />
+                    android:src="@drawable/ic_nfc_black_48dp"
+                    android:tint="@color/colorAccent" />
 
                 <TextView
                     android:id="@+id/newEntityNfcId"

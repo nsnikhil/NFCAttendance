@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 
 public class DownloadActivity extends AppCompatActivity {
 
-    ProgressBar downloadProgress;
+    ProgressBar mDownloadProgress;
     private static final String mFolderName = "profilepic";
 
     @Override
@@ -48,7 +48,7 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
     private void initilize() {
-        downloadProgress = (ProgressBar)findViewById(R.id.downladProgress);
+        mDownloadProgress = (ProgressBar)findViewById(R.id.downladProgress);
     }
 
     private String getUrl() {

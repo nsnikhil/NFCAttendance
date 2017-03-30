@@ -30,9 +30,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.drivool.nrs.nfcattendance.data.TableNames;
-import com.drivool.nrs.nfcattendance.fragments.AlList;
-import com.drivool.nrs.nfcattendance.fragments.HistoryList;
-import com.drivool.nrs.nfcattendance.fragments.PresentList;
+import com.drivool.nrs.nfcattendance.fragments.HistoryListFragment;
+import com.drivool.nrs.nfcattendance.fragments.PresentListFragment;
 import com.drivool.nrs.nfcattendance.data.TableNames.table1;
 import com.drivool.nrs.nfcattendance.data.TableNames.table2;
 import com.drivool.nrs.nfcattendance.data.TableNames.tabletemp;
@@ -42,17 +41,16 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
 
-    Toolbar mainToolbar;
+    Toolbar mToolbar;
     DrawerLayout mDrawerLayout;
-    LinearLayout fragmentContainer;
-    RelativeLayout mainContainer;
+    LinearLayout mFragmentContainer;
+    RelativeLayout mContainer;
     private NfcAdapter mNfcAdapter;
     NavigationView mNavigationView;
-    android.support.v4.app.Fragment presentList;
-    android.support.v4.app.Fragment historyList;
-    android.support.v4.app.Fragment allList;
+    android.support.v4.app.Fragment mPresentList;
+    android.support.v4.app.Fragment mHistoryList;
     private static final int mNfcRequestCode = 154;
-    PendingIntent pendingIntent;
+    PendingIntent mPendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removeOffConnection(final Bundle s) {
-        Snackbar.make(fragmentContainer, "No Internet", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
+        Snackbar.make(mFragmentContainer, "No Internet", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addOnConnection(s);
@@ -101,15 +99,12 @@ public class MainActivity extends AppCompatActivity {
     private void addFragments(Bundle savedInstanceState) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if (savedInstanceState == null) {
-            presentList = new PresentList();
-            historyList = new HistoryList();
-            allList = new AlList();
-            ft.add(R.id.fragmentContainer, presentList);
-            ft.add(R.id.fragmentContainer, historyList);
-            ft.add(R.id.fragmentContainer, allList);
-            ft.show(presentList);
-            ft.hide(historyList);
-            ft.hide(allList);
+            mPresentList = new PresentListFragment();
+            mHistoryList = new HistoryListFragment();
+            ft.add(R.id.fragmentContainer, mPresentList);
+            ft.add(R.id.fragmentContainer, mHistoryList);
+            ft.show(mPresentList);
+            ft.hide(mHistoryList);
             ft.commit();
         }
     }
@@ -117,22 +112,22 @@ public class MainActivity extends AppCompatActivity {
     private void checkNfc() {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
-            Snackbar.make(fragmentContainer, "Nfc Unavaialble", BaseTransientBottomBar.LENGTH_INDEFINITE).setActionTextColor(getResources().getColor(R.color.white)).show();
+            Snackbar.make(mFragmentContainer, "Nfc Unavaialble", BaseTransientBottomBar.LENGTH_INDEFINITE).setActionTextColor(getResources().getColor(R.color.white)).show();
         } else if (!mNfcAdapter.isEnabled()) {
-            Snackbar.make(fragmentContainer, "Nfc Disabled", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Turn On", new View.OnClickListener() {
+            Snackbar.make(mFragmentContainer, "Nfc Disabled", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Turn On", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivityForResult(new Intent(Settings.ACTION_NFC_SETTINGS), mNfcRequestCode);
                 }
             }).setActionTextColor(getResources().getColor(R.color.white)).show();
         }
-        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mNfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+        mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
     }
 
     @Override
@@ -161,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
                 tagInfo = tagInfo.replace(" ", "");
                 Cursor c = getContentResolver().query(TableNames.mTempContentUri, null, null, null, null);
                 if (!checkExists(c, tagInfo)) {
-                    //test(tagInfo);
                    addStudent(tagInfo);
                 } else {
                     MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.error);
@@ -226,10 +220,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initilize() {
-        mainToolbar = (Toolbar) findViewById(R.id.mainToolbar);
-        setSupportActionBar(mainToolbar);
-        fragmentContainer = (LinearLayout) findViewById(R.id.fragmentContainer);
-        mainContainer = (RelativeLayout) findViewById(R.id.mainContainer);
+        mToolbar = (Toolbar) findViewById(R.id.mainToolbar);
+        setSupportActionBar(mToolbar);
+        mFragmentContainer = (LinearLayout) findViewById(R.id.fragmentContainer);
+        mContainer = (RelativeLayout) findViewById(R.id.mainContainer);
     }
 
 
@@ -237,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.mainDrawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.mainNaviagtionView);
         mNavigationView.getMenu().getItem(0).setChecked(true);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mainToolbar, R.string.drawerOpen, R.string.drawerClose) {
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawerOpen, R.string.drawerClose) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -256,30 +250,22 @@ public class MainActivity extends AppCompatActivity {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 switch (item.getItemId()) {
                     case R.id.navigationPresent:
-                        ft.show(presentList);
-                        ft.hide(historyList);
-                        ft.hide(allList);
+                        ft.show(mPresentList);
+                        ft.hide(mHistoryList);
                         drawerAction(0);
-                        break;
-                    case R.id.navigationALL:
-                        ft.show(allList);
-                        ft.hide(presentList);
-                        ft.hide(historyList);
-                        drawerAction(1);
-                        break;
-                    case R.id.navigationHistory:
-                        ft.hide(allList);
-                        ft.hide(presentList);
-                        ft.show(historyList);
-                        drawerAction(2);
                         break;
                     case R.id.navigationAdmin:
                         mDrawerLayout.closeDrawers();
-                        startActivity(new Intent(MainActivity.this, NewUser.class));
+                        startActivity(new Intent(MainActivity.this, AdminActivity.class));
+                        break;
+                    case R.id.navigationHistory:
+                        ft.hide(mPresentList);
+                        ft.show(mHistoryList);
+                        drawerAction(1);
                         break;
                     case R.id.navigationSettings:
                         mDrawerLayout.closeDrawers();
-                        startActivity(new Intent(MainActivity.this, Prefrences.class));
+                        startActivity(new Intent(MainActivity.this, PrefrencesActivity.class));
                         break;
                 }
                 ft.commit();
@@ -292,7 +278,6 @@ public class MainActivity extends AppCompatActivity {
     private void drawerAction(int key) {
         invalidateOptionsMenu();
         MenuItem menuPresentList = mNavigationView.getMenu().getItem(0).setChecked(false);
-        MenuItem menuAllList = mNavigationView.getMenu().getItem(1).setChecked(false);
         MenuItem menuHistory = mNavigationView.getMenu().getItem(2).setChecked(false);
         mDrawerLayout.closeDrawers();
         switch (key) {
@@ -301,10 +286,6 @@ public class MainActivity extends AppCompatActivity {
                 getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
                 break;
             case 1:
-                menuAllList.setChecked(true);
-                getSupportActionBar().setTitle(getResources().getString(R.string.titleAllEntities));
-                break;
-            case 2:
                 menuHistory.setChecked(true);
                 getSupportActionBar().setTitle(getResources().getString(R.string.titleHistory));
                 break;

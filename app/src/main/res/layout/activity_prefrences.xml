@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/verticalLinearLayout"
     android:background="@color/colorBackground"
-    tools:context="com.drivool.nrs.nfcattendance.Prefrences">
+    tools:context="com.drivool.nrs.nfcattendance.PrefrencesActivity">
 
     <include layout="@layout/toolbar"
         android:id="@+id/prefToolbar"/>

@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -59,28 +58,28 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class NewUser extends AppCompatActivity {
+public class NewUserActivity extends AppCompatActivity {
 
 
-    EditText name,phone,addres,classname,roll;
-    TextView nfcId;
-    FloatingActionButton save;
+    EditText mName,mPhone,mAddres,mClassname,mRoll;
+    TextView mNfcId;
+    FloatingActionButton mSave;
     private NfcAdapter mNfcAdapter;
-    ImageView picture;
+    ImageView mPicture;
     private static final int CAMERA_REQUEST_CODE = 155;
     private static final int GALLERY_REQUEST_CODE = 156;
-    Bitmap image = null;
-    Toolbar newUserToolbar;
-    String idPresent = "Id Already Present";
-    RelativeLayout newEntityContainer;
-    String fileName = null;
+    Bitmap mImage = null;
+    Toolbar mUserToolbar;
+    String mIdPresent = "Id Already Present";
+    RelativeLayout mEntityContainer;
+    String mFileName = null;
     private static final String mNullValue = "N/A";
     private static final int mNfcRequestCode = 155;
-    String ncfIdValue = null;
-    PendingIntent pendingIntent;
+    String mNcfIdValue = null;
+    PendingIntent mPendingIntent;
 
 
-    public NewUser() {
+    public NewUserActivity() {
     }
 
     @Override
@@ -95,7 +94,7 @@ public class NewUser extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mNfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+        mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
     }
 
     @Override
@@ -107,39 +106,39 @@ public class NewUser extends AppCompatActivity {
     private void checkNfc() {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
-            Snackbar.make(newEntityContainer, "Nfc Unavaialble", BaseTransientBottomBar.LENGTH_INDEFINITE).setActionTextColor(getResources().getColor(R.color.white)).show();
+            Snackbar.make(mEntityContainer, "Nfc Unavaialble", BaseTransientBottomBar.LENGTH_INDEFINITE).setActionTextColor(getResources().getColor(R.color.white)).show();
         } else if (!mNfcAdapter.isEnabled()) {
-            Snackbar.make(newEntityContainer, "Nfc Disabled", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Turn On", new View.OnClickListener() {
+            Snackbar.make(mEntityContainer, "Nfc Disabled", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Turn On", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivityForResult(new Intent(Settings.ACTION_NFC_SETTINGS), mNfcRequestCode);
                 }
             }).setActionTextColor(getResources().getColor(R.color.white)).show();
         }
-        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
     }
 
     private void initilize() {
-        newUserToolbar = (Toolbar)findViewById(R.id.newUserToolbar);
-        newEntityContainer = (RelativeLayout)findViewById(R.id.newEntityContainer);
-        setSupportActionBar(newUserToolbar);
+        mUserToolbar = (Toolbar)findViewById(R.id.newUserToolbar);
+        mEntityContainer = (RelativeLayout)findViewById(R.id.newEntityContainer);
+        setSupportActionBar(mUserToolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.addentity));
-        name = (EditText)findViewById(R.id.newEntityName);
-        phone = (EditText)findViewById(R.id.newEntityPhone);
-        addres = (EditText)findViewById(R.id.newEntityAddress);
-        classname = (EditText)findViewById(R.id.newEntityClass);
-        roll = (EditText)findViewById(R.id.newEntityRoll);
-        nfcId = (TextView)findViewById(R.id.newEntityNfcId);
-        save = (FloatingActionButton)findViewById(R.id.newEntitySave);
-        picture = (ImageView)findViewById(R.id.newEntityImage);
-        save.setOnClickListener(new View.OnClickListener() {
+        mName = (EditText)findViewById(R.id.newEntityName);
+        mPhone = (EditText)findViewById(R.id.newEntityPhone);
+        mAddres = (EditText)findViewById(R.id.newEntityAddress);
+        mClassname = (EditText)findViewById(R.id.newEntityClass);
+        mRoll = (EditText)findViewById(R.id.newEntityRoll);
+        mNfcId = (TextView)findViewById(R.id.newEntityNfcId);
+        mSave = (FloatingActionButton)findViewById(R.id.newEntitySave);
+        mPicture = (ImageView)findViewById(R.id.newEntityImage);
+        mSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(verifyFields()){
-                    if (image!=null) {
-                        fileName = nfcId.getText().toString()+".jpg";
+                    if (mImage!=null) {
+                        mFileName = mNfcId.getText().toString()+".jpg";
                         if(checkConnection()){
-                            saveTemp(fileName);
+                            saveTemp(mFileName);
                             insertToDatabase();
                         }else {
                             Toast.makeText(getApplicationContext(),"Check you internet connection",Toast.LENGTH_SHORT).show();
@@ -150,7 +149,7 @@ public class NewUser extends AppCompatActivity {
                 }
             }
         });
-        picture.setOnClickListener(new View.OnClickListener() {
+        mPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 chooseImageAction();
@@ -178,26 +177,26 @@ public class NewUser extends AppCompatActivity {
 
     private void cacheLocally(){
         ContentValues cv = new ContentValues();
-        cv.put(TableNames.table1.mNfcId, nfcId.getText().toString());
-        cv.put(TableNames.table1.mRoLLNumber, roll.getText().toString());
-        cv.put(TableNames.table1.mName, name.getText().toString());
-        cv.put(TableNames.table1.mAddress, addres.getText().toString());
-        cv.put(TableNames.table1.mPhoneNo, phone.getText().toString());
-        cv.put(TableNames.table1.mClass, classname.getText().toString());
-        cv.put(TableNames.table1.mPhoto,nfcId.getText().toString() );
+        cv.put(TableNames.table1.mNfcId, mNfcId.getText().toString());
+        cv.put(TableNames.table1.mRoLLNumber, mRoll.getText().toString());
+        cv.put(TableNames.table1.mName, mName.getText().toString());
+        cv.put(TableNames.table1.mAddress, mAddres.getText().toString());
+        cv.put(TableNames.table1.mPhoneNo, mPhone.getText().toString());
+        cv.put(TableNames.table1.mClass, mClassname.getText().toString());
+        cv.put(TableNames.table1.mPhoto,mFileName );
         getContentResolver().insert(TableNames.mContentUri, cv);
     }
 
     private void clearFields() {
-        fileName = null;
-        ncfIdValue = null;
-        name.setText("");
-        phone.setText("");
-        addres.setText("");
-        classname.setText("");
-        roll.setText("");
-        picture.setImageDrawable(getResources().getDrawable(R.drawable.profile));
-        nfcId.setText(getResources().getString(R.string.entitynfcid));
+        mFileName = null;
+        mNcfIdValue = null;
+        mName.setText("");
+        mPhone.setText("");
+        mAddres.setText("");
+        mClassname.setText("");
+        mRoll.setText("");
+        mPicture.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+        mNfcId.setText(getResources().getString(R.string.entitynfcid));
     }
 
     private String buildInsertUri(){
@@ -205,19 +204,19 @@ public class NewUser extends AppCompatActivity {
         String insertPhp = getResources().getString(R.string.urlInsertNew);
         String url = host+insertPhp;
         String nameQuery = "nm";
-        String nameValue = name.getText().toString();
+        String nameValue = mName.getText().toString();
         String rollQuery = "rln";
-        String rollValue = roll.getText().toString();
+        String rollValue = mRoll.getText().toString();
         String addressQuery = "adr";
-        String addressValue = addres.getText().toString();
+        String addressValue = mAddres.getText().toString();
         String phoneQuery = "phn";
-        String phoneValue = phone.getText().toString();
+        String phoneValue = mPhone.getText().toString();
         String classQuery = "cls";
-        String classValue = classname.getText().toString();
+        String classValue = mClassname.getText().toString();
         String nfcQuery = "nfc";
-        String nfcValue = ncfIdValue;
+        String nfcValue = mNcfIdValue;
         String photoQuery = "pic";
-        String photoValue = fileName;
+        String photoValue = mFileName;
         return Uri.parse(url).buildUpon()
                 .appendQueryParameter(nameQuery,nameValue)
                 .appendQueryParameter(rollQuery,rollValue)
@@ -237,8 +236,8 @@ public class NewUser extends AppCompatActivity {
     }
 
     private void chooseImageAction() {
-        AlertDialog.Builder choosePath = new AlertDialog.Builder(NewUser.this);
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(NewUser.this, android.R.layout.simple_list_item_1);
+        AlertDialog.Builder choosePath = new AlertDialog.Builder(NewUserActivity.this);
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(NewUserActivity.this, android.R.layout.simple_list_item_1);
         arrayAdapter.add("Take a picture");
         arrayAdapter.add("Choose from galley");
         choosePath.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
@@ -265,8 +264,8 @@ public class NewUser extends AppCompatActivity {
                 InputStream is = null;
                 try {
                     is = getContentResolver().openInputStream(data.getData());
-                    image = BitmapFactory.decodeStream(is);
-                    picture.setImageBitmap(image);
+                    mImage = BitmapFactory.decodeStream(is);
+                    mPicture.setImageBitmap(mImage);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -275,8 +274,8 @@ public class NewUser extends AppCompatActivity {
         if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Bundle extras = data.getExtras();
-                image = (Bitmap) extras.get("data");
-                picture.setImageBitmap(image);
+                mImage = (Bitmap) extras.get("data");
+                mPicture.setImageBitmap(mImage);
             }
         }
     }
@@ -298,8 +297,8 @@ public class NewUser extends AppCompatActivity {
                 for (int i = 0; i < tagId.length; i++) {
                     tagInfo += Integer.toHexString(tagId[i] & 0xFF) + " ";
                 }
-                ncfIdValue = tagInfo.replace(" ", "");
-                checkExists(ncfIdValue);
+                mNcfIdValue = tagInfo.replace(" ", "");
+                checkExists(mNcfIdValue);
             }
         }
     }
@@ -320,9 +319,9 @@ public class NewUser extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                 if(response.length()>0){
-                    Toast.makeText(getApplicationContext(),idPresent,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),mIdPresent,Toast.LENGTH_SHORT).show();
                 }else {
-                    nfcId.setText(id);
+                    mNfcId.setText(id);
                 }
             }
         }, new Response.ErrorListener() {
@@ -340,7 +339,7 @@ public class NewUser extends AppCompatActivity {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(f);
-            image.compress(Bitmap.CompressFormat.JPEG,100,fos);
+            mImage.compress(Bitmap.CompressFormat.JPEG,100,fos);
             new uploadAsync().execute(f);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -361,15 +360,15 @@ public class NewUser extends AppCompatActivity {
         SharedPreferences spf = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         AmazonS3 s3 = new AmazonS3Client(getCredentials());
         TransferUtility transferUtility = new TransferUtility(s3, getApplicationContext());
-        TransferObserver observer = transferUtility.upload("nfcattensnimages", nfcId.getText().toString()+".jpg", f);
+        TransferObserver observer = transferUtility.upload("nfcattensnimages", mNfcId.getText().toString()+".jpg", f);
     }
 
 
     private CognitoCachingCredentialsProvider getCredentials() {
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
-                "ap-northeast-1:64c4f251-c480-4c79-b192-c3719a29f949", // Identity Pool ID
-                Regions.AP_NORTHEAST_1 // Region
+                "ap-northeast-1:64c4f251-c480-4c79-b192-c3719a29f949",
+                Regions.AP_NORTHEAST_1
         );
         return credentialsProvider;
     }
@@ -389,23 +388,22 @@ public class NewUser extends AppCompatActivity {
 
 
     private boolean verifyFields(){
-        if(name.getText().toString().isEmpty()||name.getText().toString().length()==0){
+        if(mName.getText().toString().isEmpty()||mName.getText().toString().length()==0){
             Toast.makeText(getApplicationContext(), "Enter the name", Toast.LENGTH_SHORT).show();
             return false;
-        }if(roll.getText().toString().isEmpty()||roll.getText().toString().length()==0){
+        }if(mRoll.getText().toString().isEmpty()||mRoll.getText().toString().length()==0){
             Toast.makeText(getApplicationContext(), "Enter the roll no", Toast.LENGTH_SHORT).show();
             return false;
-        }if(addres.getText().toString().isEmpty()||addres.getText().toString().length()==0){
+        }if(mAddres.getText().toString().isEmpty()||mAddres.getText().toString().length()==0){
             Toast.makeText(getApplicationContext(), "Enter the address", Toast.LENGTH_SHORT).show();
             return false;
-        }if(phone.getText().toString().isEmpty()||phone.getText().toString().length()==0){
+        }if(mPhone.getText().toString().isEmpty()||mPhone.getText().toString().length()==0){
             Toast.makeText(getApplicationContext(), "Enter the phone no", Toast.LENGTH_SHORT).show();
             return false;
-        }if(classname.getText().toString().isEmpty()||classname.getText().toString().length()==0){
+        }if(mClassname.getText().toString().isEmpty()||mClassname.getText().toString().length()==0){
             Toast.makeText(getApplicationContext(), "Enter the class name", Toast.LENGTH_SHORT).show();
             return false;
-
-        }if(nfcId.getText().toString().equalsIgnoreCase(getResources().getString(R.string.entitynfcid))){
+        }if(mNfcId.getText().toString().equalsIgnoreCase(getResources().getString(R.string.entitynfcid))){
             Toast.makeText(getApplicationContext(), "Scan the nfc tag", Toast.LENGTH_SHORT).show();
             return false;
         }

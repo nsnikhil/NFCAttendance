@@ -6,9 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 
-public class Prefrences extends AppCompatActivity {
+public class PrefrencesActivity extends AppCompatActivity {
 
-    android.support.v7.widget.Toolbar prefrenceToolbar;
+    android.support.v7.widget.Toolbar mPrefrenceToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,8 +19,8 @@ public class Prefrences extends AppCompatActivity {
     }
 
     private void initilize() {
-        prefrenceToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.prefToolbar);
-        setSupportActionBar(prefrenceToolbar);
+        mPrefrenceToolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.prefToolbar);
+        setSupportActionBar(mPrefrenceToolbar);
     }
 
     public static class PrefrenceFragment extends PreferenceFragment{

@@ -20,15 +20,15 @@ import java.util.ArrayList;
  * Created by Nikhil on 11-Mar-17.
  */
 
-public class HistoryAdaptr extends ArrayAdapter<String> {
+public class HistoryAdapter extends ArrayAdapter<String> {
 
     Context mContext;
-    ArrayList<String> dates;
+    ArrayList<String> mDates;
 
-    public HistoryAdaptr(@NonNull Context context, ArrayList<String> list) {
+    public HistoryAdapter(@NonNull Context context, ArrayList<String> list) {
         super(context, 0);
         mContext = context;
-        dates = list;
+        mDates = list;
     }
 
     @NonNull
@@ -42,19 +42,19 @@ public class HistoryAdaptr extends ArrayAdapter<String> {
         }else {
             historyViewHolder = (HistoryViewHolder) convertView.getTag();
         }
-        historyViewHolder.date.setText(dates.get(position));
+        historyViewHolder.date.setText(mDates.get(position));
         return convertView;
     }
 
     @Override
     public int getCount() {
-        return dates.size();
+        return mDates.size();
     }
 
     @Nullable
     @Override
     public String getItem(int position) {
-        return dates.get(position);
+        return mDates.get(position);
     }
 
     public  class HistoryViewHolder{

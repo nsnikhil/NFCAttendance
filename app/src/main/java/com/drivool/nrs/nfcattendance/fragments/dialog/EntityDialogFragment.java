@@ -1,4 +1,4 @@
-package com.drivool.nrs.nfcattendance;
+package com.drivool.nrs.nfcattendance.fragments.dialog;
 
 import android.app.DialogFragment;
 import android.content.Context;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.drivool.nrs.nfcattendance.R;
 import com.drivool.nrs.nfcattendance.data.TableHelper;
 import com.drivool.nrs.nfcattendance.data.TableNames;
 import com.drivool.nrs.nfcattendance.data.TableNames.table1;
@@ -28,10 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class EntityDialog extends android.support.v4.app.DialogFragment{
+public class EntityDialogFragment extends android.support.v4.app.DialogFragment{
 
-    ImageView picture;
-    TextView name,phoneno,address,nfcId,boardtime,endTime;
+    ImageView mPicture;
+    TextView mName,mPhoneno,mAddress,mNfcId,mBoardtime,mEndTime;
     private static final String mFolderName = "profilepic";
 
 
@@ -45,13 +46,13 @@ public class EntityDialog extends android.support.v4.app.DialogFragment{
     }
 
     private void initilize(View v) {
-        picture = (ImageView)v.findViewById(R.id.dialogPicture);
-        name = (TextView)v.findViewById(R.id.dialogName);
-        phoneno = (TextView)v.findViewById(R.id.dialogPhoneNo);
-        address = (TextView)v.findViewById(R.id.dialogAddress);
-        nfcId = (TextView)v.findViewById(R.id.dialogNfcId);
-        boardtime = (TextView)v.findViewById(R.id.dialogBoardTime);
-        endTime = (TextView)v.findViewById(R.id.dialogExitTime);
+        mPicture = (ImageView)v.findViewById(R.id.dialogPicture);
+        mName = (TextView)v.findViewById(R.id.dialogName);
+        mPhoneno = (TextView)v.findViewById(R.id.dialogPhoneNo);
+        mAddress = (TextView)v.findViewById(R.id.dialogAddress);
+        mNfcId = (TextView)v.findViewById(R.id.dialogNfcId);
+        mBoardtime = (TextView)v.findViewById(R.id.dialogBoardTime);
+        mEndTime = (TextView)v.findViewById(R.id.dialogExitTime);
     }
 
     private void query(String aNfcId){
@@ -71,15 +72,15 @@ public class EntityDialog extends android.support.v4.app.DialogFragment{
     }
 
     public void setValues(String nm,String phn,String adr,String nfc,String brdTm,String endTm,String url){
-        name.setText("Name : "+nm);
-        phoneno.setText("Phone No : "+phn);
-        address.setText("Address : "+adr);
-        nfcId.setText("NFC id : "+nfc);
-        boardtime.setText("Board time : "+makeTime(brdTm));
+        mName.setText("Name : "+nm);
+        mPhoneno.setText("Phone No : "+phn);
+        mAddress.setText("Address : "+adr);
+        mNfcId.setText("NFC id : "+nfc);
+        mBoardtime.setText("Board time : "+makeTime(brdTm));
         if(endTm.equalsIgnoreCase("")){
-            endTime.setText("End time : On Trip ");
+            mName.setText("End time : On Trip ");
         }else {
-            endTime.setText("End time : "+endTm);
+            mEndTime.setText("End time : "+endTm);
         }
         setPicture(url);
     }
@@ -92,7 +93,7 @@ public class EntityDialog extends android.support.v4.app.DialogFragment{
                 .centerCrop()
                 .placeholder(R.drawable.profile)
                 .crossFade()
-                .into(picture);
+                .into(mPicture);
     }
 
 

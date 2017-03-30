@@ -37,13 +37,13 @@
             android:authorities="com.drivool.nrs.nfcattendance" />
 
         <activity
-            android:name=".Prefrences"
+            android:name=".PrefrencesActivity"
             android:label="@string/navigationsettings" />
         <activity android:name=".DownloadActivity"/>
         <service
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
-        <activity android:name=".NewUser"
+        <activity android:name=".NewUserActivity"
             android:launchMode="singleTask"
             android:label="@string/navigationAdmin">
             <intent-filter>
@@ -51,6 +51,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".AdminActivity"/>
     </application>
 
 </manifest>
