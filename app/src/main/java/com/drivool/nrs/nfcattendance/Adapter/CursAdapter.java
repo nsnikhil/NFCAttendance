@@ -2,6 +2,7 @@ package com.drivool.nrs.nfcattendance.Adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,19 +37,12 @@ public class CursAdapter extends android.widget.CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         MyViewHolder myViewHolder = (MyViewHolder) view.getTag();
         myViewHolder.name.setText(cursor.getString(cursor.getColumnIndex(table1.mName)));
-        if(cursor.getString(cursor.getColumnIndex(table1.mPhoto))!=null){
-            setPicture(context,cursor.getString(cursor.getColumnIndex(table1.mPhoto)),myViewHolder);
+        if(!cursor.getString(cursor.getColumnIndex(table1.mPhoto)).equalsIgnoreCase("null")){
+            myViewHolder.picture.setImageBitmap(BitmapFactory.decodeFile(new File(context.getExternalCacheDir(),cursor.getString(cursor.getColumnIndex(table1.mPhoto))).toString()));
+            myViewHolder.picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }else {
+            myViewHolder.picture.setImageDrawable(context.getResources().getDrawable(R.drawable.profile));
         }
-    }
-
-    private void setPicture(Context c,String pic,MyViewHolder myViewHolder){
-        String url = c.getResources().getString(R.string.urlBucketHost)+c.getResources().getString(R.string.urlBucketName)+"/"+pic;
-        Glide.with(c)
-                .load(url)
-                .centerCrop()
-                .placeholder(R.drawable.profile)
-                .crossFade()
-                .into(myViewHolder.picture);
     }
 
     public class MyViewHolder{

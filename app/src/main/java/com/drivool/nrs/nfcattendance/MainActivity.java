@@ -67,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkFirst() {
         if (getContentResolver().query(TableNames.mContentUri, null, null, null, null).getCount() <= 0) {
-            startActivity(new Intent(MainActivity.this, DownloadActivity.class));
+            if(mNfcAdapter!=null){
+                startActivity(new Intent(MainActivity.this, DownloadActivity.class));
+            }
         }
     }
 
@@ -112,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
     private void checkNfc() {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
-            Snackbar.make(mFragmentContainer, "Nfc Unavaialble", BaseTransientBottomBar.LENGTH_INDEFINITE).setActionTextColor(getResources().getColor(R.color.white)).show();
+            finish();
+            startActivity(new Intent(MainActivity.this,ErrorActivity.class));
         } else if (!mNfcAdapter.isEnabled()) {
             Snackbar.make(mFragmentContainer, "Nfc Disabled", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Turn On", new View.OnClickListener() {
                 @Override
@@ -120,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(new Intent(Settings.ACTION_NFC_SETTINGS), mNfcRequestCode);
                 }
             }).setActionTextColor(getResources().getColor(R.color.white)).show();
+
         }
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
     }
@@ -127,13 +131,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
+        if(mNfcAdapter!=null){
+            mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mNfcAdapter.disableForegroundDispatch(this);
+        if(mNfcAdapter!=null){
+            mNfcAdapter.disableForegroundDispatch(this);
+        }
     }
 
     @Override
@@ -166,14 +174,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void test(String tagInfo) {
-        Uri u = Uri.withAppendedPath(TableNames.mContentUri,tagInfo);
-        Toast.makeText(getApplicationContext(), u.toString(), Toast.LENGTH_SHORT).show();
-        String[] tst = new String[]{u.toString().substring(u.toString().lastIndexOf('/')+1)};
-        Toast.makeText(getApplicationContext(), tst[0], Toast.LENGTH_SHORT).show();
-        Toast.makeText(getApplicationContext(), getContentResolver().query(u,null,null,null,null).getCount()+"", Toast.LENGTH_SHORT).show();
 
-    }
 
     private void addStudent(String tagInfo) {
         Cursor c = getContentResolver().query(Uri.withAppendedPath(TableNames.mContentUri, tagInfo), null, null, null, null);

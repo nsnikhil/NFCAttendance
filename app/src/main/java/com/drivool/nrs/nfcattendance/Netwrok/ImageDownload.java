@@ -22,7 +22,6 @@ import java.net.URL;
 public class ImageDownload extends AsyncTask<String,Void,Void> {
 
     Context mContext;
-    private static final String mFolderName = "profilepic";
 
     public ImageDownload(Context context){
         mContext  = context;
@@ -37,7 +36,6 @@ public class ImageDownload extends AsyncTask<String,Void,Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        Toast.makeText(mContext,"File Saved",Toast.LENGTH_SHORT).show();
     }
 
     private URL makeUrl(String URL){

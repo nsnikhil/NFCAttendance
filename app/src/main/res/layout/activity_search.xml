@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/matchParent"
+    android:id="@+id/searchContainer"
+    tools:context="com.drivool.nrs.nfcattendance.SearchActivity">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/serachToolbar"
+        android:background="@android:color/transparent"/>
+
+    <GridView
+        android:id="@+id/serachList"
+        android:layout_below="@id/serachToolbar"
+        style="@style/matchParent"
+        android:numColumns="2" />
+
+    <com.claudiodegio.msv.MaterialSearchView
+        android:id="@+id/searchSearchView"
+        android:elevation="5dip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

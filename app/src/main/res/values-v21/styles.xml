@@ -13,4 +13,9 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
+    <style name="buttonColor" parent="AppTheme">
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+    </style>
+
+
 </resources>

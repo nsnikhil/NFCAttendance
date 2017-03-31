@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -38,7 +39,6 @@ import java.util.concurrent.ExecutionException;
 public class DownloadActivity extends AppCompatActivity {
 
     ProgressBar mDownloadProgress;
-    private static final String mFolderName = "profilepic";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,10 +106,13 @@ public class DownloadActivity extends AppCompatActivity {
                 cv.put(TableNames.table1.mPhoneNo, phoneno);
                 cv.put(TableNames.table1.mClass, cls);
 
-                String filename = nfcId+".jpg";
-                cv.put(TableNames.table1.mPhoto, filename);
-                String url = getResources().getString(R.string.urlBucketHost)+getResources().getString(R.string.urlBucketName)+"/"+photo;
-                new ImageDownload(getApplicationContext()).execute(url,filename);
+                if(!photo.equalsIgnoreCase("null")){
+                    cv.put(TableNames.table1.mPhoto, photo);
+                    String url = getResources().getString(R.string.urlBucketHost)+getResources().getString(R.string.urlBucketName)+"/"+photo;
+                    new ImageDownload(getApplicationContext()).execute(url,photo);
+                }else {
+                    cv.put(TableNames.table1.mPhoto, "null");
+                }
 
                 getContentResolver().insert(TableNames.mContentUri, cv);
             }

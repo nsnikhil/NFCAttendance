@@ -23,20 +23,22 @@ public class FileOperations {
     }
 
     public void saveImage(String fileName,Bitmap image){
-        File folder = mContext.getExternalCacheDir();
-        File f = new File(folder, fileName);
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(f);
-            image.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if(image!=null) {
+            File folder = mContext.getExternalCacheDir();
+            File f = new File(folder, fileName);
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(f);
+                image.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

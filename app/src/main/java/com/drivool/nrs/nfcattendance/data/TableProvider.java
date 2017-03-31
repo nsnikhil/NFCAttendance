@@ -22,6 +22,8 @@ public class TableProvider extends ContentProvider{
     private static final int uAllTempEntities = 5465;
     private static final int uSingleTempEntity = 5466;
 
+    private static final int uNameEntity = 5467;
+
     static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -33,6 +35,8 @@ public class TableProvider extends ContentProvider{
 
         sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableScheduleName,uAllEntries);
         sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableScheduleName+"/*",uSingleEntry);
+
+        sUriMatcher.addURI(TableNames.mAuthority,TableNames.mTableName+"/name/*",uNameEntity);
     }
 
     TableHelper helper;
@@ -70,6 +74,11 @@ public class TableProvider extends ContentProvider{
                 break;
             case uSingleEntry:
                 selection = TableNames.table2.mNfcId +"=?";
+                selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
+                c = sdb.query(TableNames.mTableScheduleName,projection,selection,selectionArgs,null,null,sortOrder);
+                break;
+            case uNameEntity:
+                selection = TableNames.table1.mName +"=?";
                 selectionArgs = new String[]{uri.toString().substring(uri.toString().lastIndexOf('/')+1)};
                 c = sdb.query(TableNames.mTableScheduleName,projection,selection,selectionArgs,null,null,sortOrder);
                 break;

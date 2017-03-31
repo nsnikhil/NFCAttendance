@@ -14,7 +14,6 @@
         app:contentInsetStart="0dp"
         app:layout_scrollFlags="scroll|enterAlways">
 
-
     </android.support.v7.widget.Toolbar>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -37,9 +36,10 @@
 
 
     <com.claudiodegio.msv.MaterialSearchView
-        android:id="@+id/sv"
+        android:id="@+id/adminSearchView"
+        android:elevation="5dip"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="5dip"></com.claudiodegio.msv.MaterialSearchView>
+        android:layout_height="wrap_content"/>
+
 
 </RelativeLayout>

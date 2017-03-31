@@ -15,6 +15,7 @@
 
     <!-- intentExtra-->
     <string name="intentExtraNfcId">intentExtraNfcId</string>
+    <string name="intentExtraSearchQuery">intentExtraSearchQuery</string>
     <!-- -->
 
     <!-- entityObject-->

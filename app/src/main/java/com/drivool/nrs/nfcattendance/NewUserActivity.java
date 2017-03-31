@@ -101,26 +101,24 @@ public class NewUserActivity extends AppCompatActivity implements View.OnClickLi
         String nfcId = getIntent().getExtras().getString(getResources().getString(R.string.intentExtraNfcId));
         Cursor c = getContentResolver().query(Uri.withAppendedPath(TableNames.mContentUri, nfcId), null, null, null, null);
         if (c.moveToNext()) {
-            mName.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mName)));
-            mPhone.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mPhoneNo)));
-            mAddres.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mAddress)));
-            if(c.getString(c.getColumnIndex(TableNames.tabletemp.mClass))!=null){
-                mClassname.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mClass)));
-            }if(c.getString(c.getColumnIndex(TableNames.tabletemp.mRoLLNumber))!=null){
-                mRoll.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mRoLLNumber)));
+            mName.setText(c.getString(c.getColumnIndex(TableNames.table1.mName)));
+            mPhone.setText(c.getString(c.getColumnIndex(TableNames.table1.mPhoneNo)));
+            mAddres.setText(c.getString(c.getColumnIndex(TableNames.table1.mAddress)));
+            if(c.getString(c.getColumnIndex(TableNames.table1.mClass))!=null){
+                mClassname.setText(c.getString(c.getColumnIndex(TableNames.table1.mClass)));
+            }if(c.getString(c.getColumnIndex(TableNames.table1.mRoLLNumber))!=null){
+                mRoll.setText(c.getString(c.getColumnIndex(TableNames.table1.mRoLLNumber)));
             }
-            mNfcId.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mNfcId)));
-            mNcfIdValue = c.getString(c.getColumnIndex(TableNames.tabletemp.mNfcId));
-            if(c.getString(c.getColumnIndex(TableNames.tabletemp.mPhoto))!=null){
-                mFileName = c.getString(c.getColumnIndex(TableNames.tabletemp.mPhoto));
-                String url = getResources().getString(R.string.urlBucketHost) + getResources().getString(R.string.urlBucketName) + "/" + mFileName;
+            mNfcId.setText(c.getString(c.getColumnIndex(TableNames.table1.mNfcId)));
+            mNcfIdValue = c.getString(c.getColumnIndex(TableNames.table1.mNfcId));
+            if(c.getString(c.getColumnIndex(TableNames.table1.mPhoto))!=null||
+                    !c.getString(c.getColumnIndex(TableNames.table1.mPhoto)).equalsIgnoreCase("null")){
+                mFileName = c.getString(c.getColumnIndex(TableNames.table1.mPhoto));
                 mImage = BitmapFactory.decodeFile(new File(getExternalCacheDir(),mFileName).toString());
-                Glide.with(getApplicationContext())
-                        .load(url)
-                        .centerCrop()
-                        .placeholder(R.drawable.profile)
-                        .crossFade()
-                        .into(mPicture);
+                mPicture.setImageBitmap(mImage);
+            }else {
+                mPicture.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+                mPicture.setScaleType(ImageView.ScaleType.CENTER_CROP);
             }
         }
     }

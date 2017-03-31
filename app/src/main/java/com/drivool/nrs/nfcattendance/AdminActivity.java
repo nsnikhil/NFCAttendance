@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,24 +31,19 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.claudiodegio.msv.OnSearchViewListener;
 import com.drivool.nrs.nfcattendance.Adapter.CursAdapter;
 import com.drivool.nrs.nfcattendance.Netwrok.ImageDownload;
 import com.drivool.nrs.nfcattendance.data.TableNames;
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 
@@ -58,9 +54,9 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
     Toolbar mAdminToolbar;
     CursAdapter mCusrAdaptr;
     FloatingActionButton mAddEntity;
-    com.claudiodegio.msv.MaterialSearchView mSearchView;
     SwipeRefreshLayout mRefresh;
-    private static final String mFolderName = "profilepic";
+    com.claudiodegio.msv.MaterialSearchView mSerachView;
+
 
     public AdminActivity() {
 
@@ -78,22 +74,11 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
         checkDatabase();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.admin_menu, menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        mSearchView.setMenuItem(item);
-        return true;
-    }
-
-
-
     private void initilize() {
         mAdminAllList = (GridView) findViewById(R.id.adminAllList);
         mAdminToolbar = (Toolbar)findViewById(R.id.adminToolbar);
         mAddEntity = (FloatingActionButton)findViewById(R.id.adminAddEntity);
         mAddEntity.setOnClickListener(this);
-        mSearchView = (com.claudiodegio.msv.MaterialSearchView)findViewById(R.id.sv);
         mRefresh = (SwipeRefreshLayout)findViewById(R.id.adminAllRefresh);
         mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -102,7 +87,9 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         });
         setSupportActionBar(mAdminToolbar);
-        mSearchView.setOnSearchViewListener(new OnSearchViewListener() {
+        getSupportActionBar().setTitle("Admin Panel");
+        mSerachView = (com.claudiodegio.msv.MaterialSearchView)findViewById(R.id.adminSearchView);
+        mSerachView.setOnSearchViewListener(new OnSearchViewListener() {
             @Override
             public void onSearchViewShown() {
 
@@ -115,6 +102,9 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
 
             @Override
             public boolean onQueryTextSubmit(String s) {
+                Intent search = new Intent(AdminActivity.this,SearchActivity.class);
+                search.putExtra(getResources().getString(R.string.intentExtraSearchQuery),s);
+                startActivity(search);
                 return false;
             }
 
@@ -132,7 +122,7 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
                             public void onClick(DialogInterface dialog, int which) {
                                 Cursor c = (Cursor) parent.getItemAtPosition(position);
                                 Intent edit = new Intent(AdminActivity.this,NewUserActivity.class);
-                                edit.putExtra(getResources().getString(R.string.intentExtraNfcId),c.getString(c.getColumnIndex(TableNames.tabletemp.mNfcId)));
+                                edit.putExtra(getResources().getString(R.string.intentExtraNfcId),c.getString(c.getColumnIndex(TableNames.table1.mNfcId)));
                                 startActivity(edit);
                             }
                         })
@@ -148,8 +138,8 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
                                 }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        deleteEntityFromServer();
-                                        deleteEntityFromCache();
+                                        Cursor c = (Cursor) parent.getItemAtPosition(position);
+                                        deleteEntityFromServer(c.getString(c.getColumnIndex(TableNames.table1.mNfcId)));
                                     }
                                 }).create().show();
                             }
@@ -164,10 +154,51 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
         });
     }
 
-    private void deleteEntityFromServer() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.admin_menu, menu);
+        MenuItem item = menu.findItem(R.id.menuAdminSearch);
+        mSerachView.setMenuItem(item);
+        return true;
     }
 
-    private void deleteEntityFromCache() {
+    private void deleteEntityFromServer(final String nfcId) {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, buildDeleteEntityUri(nfcId), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                deleteEntityFromCache(nfcId);
+                deleteImageFile(nfcId);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue.add(stringRequest);
+    }
+
+    private void deleteImageFile(String nfcId) {
+        File f =   new File(getExternalCacheDir(),nfcId);
+        if(f.exists()){
+            f.delete();
+        }
+    }
+
+
+    private void deleteEntityFromCache(String nfcId) {
+        getContentResolver().delete(Uri.withAppendedPath(TableNames.mContentUri,nfcId),null,null);
+    }
+
+    private String buildDeleteEntityUri(String nfcId){
+        String host = getResources().getString(R.string.urlServer);
+        String deletePhp = getResources().getString(R.string.urlNfcDelete);
+        String url = host + deletePhp;
+        String nfcQuery = "nfcid";
+        String s = Uri.parse(url).buildUpon().appendQueryParameter(nfcQuery, nfcId).build().toString();
+        return s;
     }
 
     private AlertDialog.Builder buildDialog(String title,String message){
