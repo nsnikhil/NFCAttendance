@@ -1,15 +1,20 @@
 package com.drivool.nrs.nfcattendance;
 
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,9 +25,30 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.claudiodegio.msv.OnSearchViewListener;
 import com.drivool.nrs.nfcattendance.Adapter.CursAdapter;
+import com.drivool.nrs.nfcattendance.Netwrok.ImageDownload;
 import com.drivool.nrs.nfcattendance.data.TableNames;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 
 public class AdminActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,View.OnClickListener{
@@ -33,6 +59,8 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
     CursAdapter mCusrAdaptr;
     FloatingActionButton mAddEntity;
     com.claudiodegio.msv.MaterialSearchView mSearchView;
+    SwipeRefreshLayout mRefresh;
+    private static final String mFolderName = "profilepic";
 
     public AdminActivity() {
 
@@ -43,9 +71,11 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
         initilize();
+        mRefresh.setRefreshing(true);
         mCusrAdaptr = new CursAdapter(getApplicationContext(), null);
         mAdminAllList.setAdapter(mCusrAdaptr);
         loadfList();
+        checkDatabase();
     }
 
     @Override
@@ -64,6 +94,13 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
         mAddEntity = (FloatingActionButton)findViewById(R.id.adminAddEntity);
         mAddEntity.setOnClickListener(this);
         mSearchView = (com.claudiodegio.msv.MaterialSearchView)findViewById(R.id.sv);
+        mRefresh = (SwipeRefreshLayout)findViewById(R.id.adminAllRefresh);
+        mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                checkDatabase();
+            }
+        });
         setSupportActionBar(mAdminToolbar);
         mSearchView.setOnSearchViewListener(new OnSearchViewListener() {
             @Override
@@ -88,29 +125,142 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
         });
         mAdminAllList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AlertDialog.Builder modifyUser = new AlertDialog.Builder(AdminActivity.this);
-                modifyUser.setMessage("Do you want to edit or delete this student")
+            public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
+                buildDialog("","Do you want to edit or delete this student")
                         .setNegativeButton("Edit", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getApplicationContext(),"Edit",Toast.LENGTH_SHORT).show();
+                                Cursor c = (Cursor) parent.getItemAtPosition(position);
+                                Intent edit = new Intent(AdminActivity.this,NewUserActivity.class);
+                                edit.putExtra(getResources().getString(R.string.intentExtraNfcId),c.getString(c.getColumnIndex(TableNames.tabletemp.mNfcId)));
+                                startActivity(edit);
                             }
                         })
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getApplicationContext(),"Delete",Toast.LENGTH_SHORT).show();
+                                buildDialog("Warning","Are you sure you want to delete this user")
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        deleteEntityFromServer();
+                                        deleteEntityFromCache();
+                                    }
+                                }).create().show();
                             }
                         })
                         .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getApplicationContext(),"Cancel",Toast.LENGTH_SHORT).show();
+
                             }
                         }).create().show();
             }
         });
+    }
+
+    private void deleteEntityFromServer() {
+    }
+
+    private void deleteEntityFromCache() {
+    }
+
+    private AlertDialog.Builder buildDialog(String title,String message){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(AdminActivity.this);
+        if(!title.equalsIgnoreCase("")){
+            dialog.setTitle(title);
+        }
+        if(!message.equalsIgnoreCase("")){
+            dialog.setTitle(message);
+        }
+        return dialog;
+    }
+
+    private int addIfNotExists(String nfcId){
+        Cursor c = getContentResolver().query(TableNames.mContentUri,null,null,null,null);
+        int count = 0;
+        while (c.moveToNext()){
+            if(nfcId.equalsIgnoreCase(c.getString(c.getColumnIndex(TableNames.table1.mNfcId)))){
+                count++;
+                break;
+            }
+        }
+        return count;
+    }
+
+    private String getUrl() {
+        String server = getResources().getString(R.string.urlServer);
+        String singleQuery = getResources().getString(R.string.urlAllEntity);
+        return server+singleQuery;
+    }
+
+    private void checkDatabase() {
+        mRefresh.setRefreshing(true);
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, getUrl(), null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    getJson(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    private void getJson(JSONArray response) throws JSONException, ExecutionException, InterruptedException {
+        if (response.length() > 0) {
+            ContentValues cv = new ContentValues();
+            for (int i = 0; i < response.length(); i++) {
+                JSONObject entity = response.getJSONObject(i);
+                String nfcId = entity.getString("nfcid");
+                if(addIfNotExists(nfcId)==0){
+                    int rollNo = entity.getInt("rollno");
+                    String name = entity.getString("studentname");
+                    String address = entity.getString("studentaddress");
+                    String phoneno = entity.getString("studentphoneno");
+                    String cls = entity.getString("studentclass");
+
+                    String photo = entity.getString("studentphoto");
+
+                    if (address.indexOf('\\') != -1) {
+                        address.replaceAll("\\/", "/");
+                    }
+                    cv.put(TableNames.table1.mNfcId, nfcId);
+                    cv.put(TableNames.table1.mRoLLNumber, rollNo);
+                    cv.put(TableNames.table1.mName, name);
+                    cv.put(TableNames.table1.mAddress, address);
+                    cv.put(TableNames.table1.mPhoneNo, phoneno);
+                    cv.put(TableNames.table1.mClass, cls);
+
+                    String filename = nfcId+".jpg";
+                    cv.put(TableNames.table1.mPhoto, filename);
+                    String url = getResources().getString(R.string.urlBucketHost)+getResources().getString(R.string.urlBucketName)+photo;
+                    new ImageDownload(getApplicationContext()).execute(url,filename);
+                    getContentResolver().insert(TableNames.mContentUri, cv);
+                }
+            }
+            mRefresh.setRefreshing(false);
+        }else {
+            mRefresh.setRefreshing(false);
+            Toast.makeText(getApplicationContext(),"Database Empty",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -124,6 +274,7 @@ public class AdminActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mRefresh.setRefreshing(false);
         mCusrAdaptr.swapCursor(data);
     }
 

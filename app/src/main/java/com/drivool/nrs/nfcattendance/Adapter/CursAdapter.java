@@ -36,11 +36,13 @@ public class CursAdapter extends android.widget.CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         MyViewHolder myViewHolder = (MyViewHolder) view.getTag();
         myViewHolder.name.setText(cursor.getString(cursor.getColumnIndex(table1.mName)));
-        setPicture(context,cursor.getString(cursor.getColumnIndex(table1.mPhoto)),myViewHolder);
+        if(cursor.getString(cursor.getColumnIndex(table1.mPhoto))!=null){
+            setPicture(context,cursor.getString(cursor.getColumnIndex(table1.mPhoto)),myViewHolder);
+        }
     }
 
     private void setPicture(Context c,String pic,MyViewHolder myViewHolder){
-        String url = c.getResources().getString(R.string.urlBucketHost)+c.getResources().getString(R.string.urlBucketName)+"/"+pic+".jpg";
+        String url = c.getResources().getString(R.string.urlBucketHost)+c.getResources().getString(R.string.urlBucketName)+"/"+pic;
         Glide.with(c)
                 .load(url)
                 .centerCrop()

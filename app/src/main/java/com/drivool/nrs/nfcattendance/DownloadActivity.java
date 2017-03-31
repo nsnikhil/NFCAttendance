@@ -17,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.drivool.nrs.nfcattendance.Netwrok.ImageDownload;
 import com.drivool.nrs.nfcattendance.data.TableNames;
 
 import org.json.JSONArray;
@@ -98,9 +99,6 @@ public class DownloadActivity extends AppCompatActivity {
                 if (address.indexOf('\\') != -1) {
                     address.replaceAll("\\/", "/");
                 }
-                if (photo.indexOf('\\') != -1) {
-                    photo.replaceAll("\\/", "/");
-                }
                 cv.put(TableNames.table1.mNfcId, nfcId);
                 cv.put(TableNames.table1.mRoLLNumber, rollNo);
                 cv.put(TableNames.table1.mName, name);
@@ -110,8 +108,8 @@ public class DownloadActivity extends AppCompatActivity {
 
                 String filename = nfcId+".jpg";
                 cv.put(TableNames.table1.mPhoto, filename);
-                String url = getResources().getString(R.string.urlBucketHost)+getResources().getString(R.string.urlBucketName)+"/"+nfcId+".jpg";
-                new DownloadImage().execute(url,filename);
+                String url = getResources().getString(R.string.urlBucketHost)+getResources().getString(R.string.urlBucketName)+"/"+photo;
+                new ImageDownload(getApplicationContext()).execute(url,filename);
 
                 getContentResolver().insert(TableNames.mContentUri, cv);
             }
@@ -122,80 +120,6 @@ public class DownloadActivity extends AppCompatActivity {
         finish();
     }
 
-    private void saveImage(String filename,Bitmap img){
-        File folder = getExternalFilesDir(mFolderName);
-        if(!folder.exists()){
-            folder.mkdir();
-        }
-        File f = new File(folder,filename);
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(f);
-            img.compress(Bitmap.CompressFormat.JPEG, 20, fos);
-            fos.flush();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if(fos!=null){
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
-    private URL makeUrl(String URL){
-        URL u = null;
-        try {
-            u =  new URL(URL);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return u;
-    }
 
-    private Bitmap getImage(URL url) {
-        HttpURLConnection htpc = null;
-        InputStream is = null;
-        Bitmap image = null;
-        try {
-            htpc = (HttpURLConnection) url.openConnection();
-            htpc.setRequestMethod("GET");
-            htpc.connect();
-            is = htpc.getInputStream();
-            image = BitmapFactory.decodeStream(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if(htpc!=null){
-                htpc.disconnect();
-            }if(is!=null){
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return image;
-    }
-
-    public class DownloadImage extends AsyncTask<String,Void,Void>{
-
-        @Override
-        protected Void doInBackground(String... params) {
-            saveImage(params[1],getImage(makeUrl(params[0])));
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Toast.makeText(getApplicationContext(),"File Saved",Toast.LENGTH_SHORT).show();
-        }
-    }
 }

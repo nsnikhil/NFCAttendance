@@ -15,12 +15,12 @@ public class TableHelper extends SQLiteOpenHelper{
     private static final String mCreateTable = "CREATE TABLE " + TableNames.mTableName + " ("
             +table1.mId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             +table1.mNfcId + " TEXT NOT NULL, "
-            +table1.mRoLLNumber + " INTEGER NOT NULL, "
+            +table1.mRoLLNumber + " INTEGER , "
             +table1.mName + " TEXT NOT NULL, "
             +table1.mPhoneNo + " TEXT NOT NULL, "
             +table1.mAddress + " TEXT NOT NULL, "
-            +table1.mClass + " TEXT NOT NULL,"
-            +table1.mPhoto + " TEXT NOT NULL"
+            +table1.mClass + " TEXT ,"
+            +table1.mPhoto + " TEXT "
             + ");";
 
     private static final String mCreateTempTable = "CREATE TABLE " + TableNames.mTableTempName + " ("

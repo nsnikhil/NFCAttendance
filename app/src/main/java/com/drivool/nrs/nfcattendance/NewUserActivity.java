@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -34,12 +35,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -47,6 +42,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.drivool.nrs.nfcattendance.File.FileOperations;
+import com.drivool.nrs.nfcattendance.Netwrok.UploadImage;
 import com.drivool.nrs.nfcattendance.data.TableNames;
 
 import org.json.JSONArray;
@@ -58,10 +56,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class NewUserActivity extends AppCompatActivity {
+public class NewUserActivity extends AppCompatActivity implements View.OnClickListener{
 
 
-    EditText mName,mPhone,mAddres,mClassname,mRoll;
+    EditText mName, mPhone, mAddres, mClassname, mRoll;
     TextView mNfcId;
     FloatingActionButton mSave;
     private NfcAdapter mNfcAdapter;
@@ -88,6 +86,43 @@ public class NewUserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_user);
         initilize();
         checkNfc();
+        if (getIntent().getExtras() != null) {
+            setValues();
+        }
+    }
+
+
+    /*
+    If the activity if started with an intent-extra
+     this function sets the value of fields from the
+     local database
+     */
+    private void setValues() {
+        String nfcId = getIntent().getExtras().getString(getResources().getString(R.string.intentExtraNfcId));
+        Cursor c = getContentResolver().query(Uri.withAppendedPath(TableNames.mContentUri, nfcId), null, null, null, null);
+        if (c.moveToNext()) {
+            mName.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mName)));
+            mPhone.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mPhoneNo)));
+            mAddres.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mAddress)));
+            if(c.getString(c.getColumnIndex(TableNames.tabletemp.mClass))!=null){
+                mClassname.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mClass)));
+            }if(c.getString(c.getColumnIndex(TableNames.tabletemp.mRoLLNumber))!=null){
+                mRoll.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mRoLLNumber)));
+            }
+            mNfcId.setText(c.getString(c.getColumnIndex(TableNames.tabletemp.mNfcId)));
+            mNcfIdValue = c.getString(c.getColumnIndex(TableNames.tabletemp.mNfcId));
+            if(c.getString(c.getColumnIndex(TableNames.tabletemp.mPhoto))!=null){
+                mFileName = c.getString(c.getColumnIndex(TableNames.tabletemp.mPhoto));
+                String url = getResources().getString(R.string.urlBucketHost) + getResources().getString(R.string.urlBucketName) + "/" + mFileName;
+                mImage = BitmapFactory.decodeFile(new File(getExternalCacheDir(),mFileName).toString());
+                Glide.with(getApplicationContext())
+                        .load(url)
+                        .centerCrop()
+                        .placeholder(R.drawable.profile)
+                        .crossFade()
+                        .into(mPicture);
+            }
+        }
     }
 
 
@@ -103,6 +138,10 @@ public class NewUserActivity extends AppCompatActivity {
         mNfcAdapter.disableForegroundDispatch(this);
     }
 
+
+    /*
+    This function checks is nfc is presnet and is on
+     */
     private void checkNfc() {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
@@ -118,75 +157,72 @@ public class NewUserActivity extends AppCompatActivity {
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
     }
 
+    /*
+    Initilizes all the variables
+     */
     private void initilize() {
-        mUserToolbar = (Toolbar)findViewById(R.id.newUserToolbar);
-        mEntityContainer = (RelativeLayout)findViewById(R.id.newEntityContainer);
+        mUserToolbar = (Toolbar) findViewById(R.id.newUserToolbar);
+        mEntityContainer = (RelativeLayout) findViewById(R.id.newEntityContainer);
         setSupportActionBar(mUserToolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.addentity));
-        mName = (EditText)findViewById(R.id.newEntityName);
-        mPhone = (EditText)findViewById(R.id.newEntityPhone);
-        mAddres = (EditText)findViewById(R.id.newEntityAddress);
-        mClassname = (EditText)findViewById(R.id.newEntityClass);
-        mRoll = (EditText)findViewById(R.id.newEntityRoll);
-        mNfcId = (TextView)findViewById(R.id.newEntityNfcId);
-        mSave = (FloatingActionButton)findViewById(R.id.newEntitySave);
-        mPicture = (ImageView)findViewById(R.id.newEntityImage);
-        mSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(verifyFields()){
-                    if (mImage!=null) {
-                        mFileName = mNfcId.getText().toString()+".jpg";
-                        if(checkConnection()){
-                            saveTemp(mFileName);
-                            insertToDatabase();
-                        }else {
-                            Toast.makeText(getApplicationContext(),"Check you internet connection",Toast.LENGTH_SHORT).show();
-                        }
-                    }else {
-                        Toast.makeText(getApplicationContext(), "Take a picture", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-        mPicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chooseImageAction();
-            }
-        });
+        mName = (EditText) findViewById(R.id.newEntityName);
+        mPhone = (EditText) findViewById(R.id.newEntityPhone);
+        mAddres = (EditText) findViewById(R.id.newEntityAddress);
+        mClassname = (EditText) findViewById(R.id.newEntityClass);
+        mRoll = (EditText) findViewById(R.id.newEntityRoll);
+        mNfcId = (TextView) findViewById(R.id.newEntityNfcId);
+        mSave = (FloatingActionButton) findViewById(R.id.newEntitySave);
+        mPicture = (ImageView) findViewById(R.id.newEntityImage);
+        mSave.setOnClickListener(this);
+        mPicture.setOnClickListener(this);
     }
 
-    private void insertToDatabase(){
+    /*
+    Uploads the data to the server
+     */
+    private void uploadToDatabase() {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, buildInsertUri(), new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, buildInsertUri(getResources().getString(R.string.urlInsertNew)), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(getApplicationContext(),response,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
                 cacheLocally();
                 clearFields();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
             }
         });
         requestQueue.add(stringRequest);
     }
 
-    private void cacheLocally(){
+    /*
+    Caches the data locally for offline and speedy usage
+     */
+    private void cacheLocally() {
         ContentValues cv = new ContentValues();
         cv.put(TableNames.table1.mNfcId, mNfcId.getText().toString());
-        cv.put(TableNames.table1.mRoLLNumber, mRoll.getText().toString());
+        if(!mRoll.getText().toString().isEmpty()&&mRoll.getText().toString().length()!=0){
+            cv.put(TableNames.table1.mRoLLNumber, mRoll.getText().toString());
+        }
         cv.put(TableNames.table1.mName, mName.getText().toString());
         cv.put(TableNames.table1.mAddress, mAddres.getText().toString());
         cv.put(TableNames.table1.mPhoneNo, mPhone.getText().toString());
-        cv.put(TableNames.table1.mClass, mClassname.getText().toString());
-        cv.put(TableNames.table1.mPhoto,mFileName );
+        if(!mClassname.getText().toString().isEmpty()&&mClassname.getText().toString().length()!=0) {
+            cv.put(TableNames.table1.mClass, mClassname.getText().toString());
+        }
+        if(mFileName!=null){
+            cv.put(TableNames.table1.mPhoto, mFileName);
+        }
         getContentResolver().insert(TableNames.mContentUri, cv);
     }
 
+    /*
+    clears the field after upload
+     so that next entity can be inserted
+     */
     private void clearFields() {
         mFileName = null;
         mNcfIdValue = null;
@@ -199,10 +235,12 @@ public class NewUserActivity extends AppCompatActivity {
         mNfcId.setText(getResources().getString(R.string.entitynfcid));
     }
 
-    private String buildInsertUri(){
+    /*
+    Returns url to insert database
+     */
+    private String buildInsertUri(String phpFile) {
         String host = getResources().getString(R.string.urlServer);
-        String insertPhp = getResources().getString(R.string.urlInsertNew);
-        String url = host+insertPhp;
+        String url = host + phpFile;
         String nameQuery = "nm";
         String nameValue = mName.getText().toString();
         String rollQuery = "rln";
@@ -218,16 +256,20 @@ public class NewUserActivity extends AppCompatActivity {
         String photoQuery = "pic";
         String photoValue = mFileName;
         return Uri.parse(url).buildUpon()
-                .appendQueryParameter(nameQuery,nameValue)
-                .appendQueryParameter(rollQuery,rollValue)
-                .appendQueryParameter(addressQuery,addressValue)
-                .appendQueryParameter(phoneQuery,phoneValue)
-                .appendQueryParameter(classQuery,classValue)
-                .appendQueryParameter(nfcQuery,nfcValue)
-                .appendQueryParameter(photoQuery,photoValue)
+                .appendQueryParameter(nameQuery, nameValue)
+                .appendQueryParameter(rollQuery, rollValue)
+                .appendQueryParameter(addressQuery, addressValue)
+                .appendQueryParameter(phoneQuery, phoneValue)
+                .appendQueryParameter(classQuery, classValue)
+                .appendQueryParameter(nfcQuery, nfcValue)
+                .appendQueryParameter(photoQuery, photoValue)
                 .build().toString();
     }
 
+
+    /*
+    Returns true if connected
+     */
     private boolean checkConnection() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -235,6 +277,10 @@ public class NewUserActivity extends AppCompatActivity {
         return isConnected;
     }
 
+    /*
+    Fuction to show dialog which allows to choose image from
+    storage or capture a new image
+     */
     private void chooseImageAction() {
         AlertDialog.Builder choosePath = new AlertDialog.Builder(NewUserActivity.this);
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(NewUserActivity.this, android.R.layout.simple_list_item_1);
@@ -283,9 +329,17 @@ public class NewUserActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        getId(intent);
+        if(getIntent().getExtras()==null){
+            getId(intent);
+        }else {
+            Toast.makeText(getApplicationContext(),"You cannot edit the nfcid",Toast.LENGTH_LONG).show();
+        }
     }
 
+    /*
+    Retrvies the nfc id from
+    the intent recieved on scanning tag
+     */
     private void getId(Intent intent) {
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
@@ -298,29 +352,40 @@ public class NewUserActivity extends AppCompatActivity {
                     tagInfo += Integer.toHexString(tagId[i] & 0xFF) + " ";
                 }
                 mNcfIdValue = tagInfo.replace(" ", "");
-                checkExists(mNcfIdValue);
+                if(checkConnection()){
+                    checkExists(mNcfIdValue);
+                }else {
+                    Toast.makeText(getApplicationContext(),"Internet is required to verify if nfc id is noew scanned nfc id is already present",Toast.LENGTH_LONG).show();
+                }
+               
             }
         }
     }
 
-    private String buildUrl(String nfcId){
+    /*
+    Retruns url with and nfcid
+     */
+    private String buildCheckExitsUrl(String nfcId) {
         String host = getResources().getString(R.string.urlServer);
-        String queryPhp =  getResources().getString(R.string.urlSingleEntity);
-        String url = host+queryPhp;
+        String queryPhp = getResources().getString(R.string.urlSingleEntity);
+        String url = host + queryPhp;
         String nfcQuery = "nfc";
-        String s =  Uri.parse(url).buildUpon().appendQueryParameter(nfcQuery,nfcId).build().toString();
+        String s = Uri.parse(url).buildUpon().appendQueryParameter(nfcQuery, nfcId).build().toString();
         return s;
     }
 
-    private void checkExists(final String id){
-
+    /*
+    Fucntion to check if a user already
+    exists before insertion
+     */
+    private void checkExists(final String id) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, buildUrl(id), null, new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, buildCheckExitsUrl(id), null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                if(response.length()>0){
-                    Toast.makeText(getApplicationContext(),mIdPresent,Toast.LENGTH_SHORT).show();
-                }else {
+                if (response.length() > 0) {
+                    Toast.makeText(getApplicationContext(), mIdPresent, Toast.LENGTH_SHORT).show();
+                } else {
                     mNfcId.setText(id);
                 }
             }
@@ -333,81 +398,86 @@ public class NewUserActivity extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-    private void saveTemp(String fileName){
-        File folder = getExternalCacheDir();
-        File f = new File(folder,fileName);
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(f);
-            mImage.compress(Bitmap.CompressFormat.JPEG,100,fos);
-            new uploadAsync().execute(f);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if(fos!=null){
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private void uploadImage(File f) throws IOException {
-        SharedPreferences spf = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        AmazonS3 s3 = new AmazonS3Client(getCredentials());
-        TransferUtility transferUtility = new TransferUtility(s3, getApplicationContext());
-        TransferObserver observer = transferUtility.upload("nfcattensnimages", mNfcId.getText().toString()+".jpg", f);
-    }
-
-
-    private CognitoCachingCredentialsProvider getCredentials() {
-        CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
-                getApplicationContext(),
-                "ap-northeast-1:64c4f251-c480-4c79-b192-c3719a29f949",
-                Regions.AP_NORTHEAST_1
-        );
-        return credentialsProvider;
-    }
-
-    public class uploadAsync extends AsyncTask<File, Void, Void> {
-
-        @Override
-        protected Void doInBackground(File... params) {
-            try {
-                uploadImage(params[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-
-
-    private boolean verifyFields(){
-        if(mName.getText().toString().isEmpty()||mName.getText().toString().length()==0){
+    /*
+    validate all fields before insetion
+     */
+    private boolean verifyFields() {
+        if (mName.getText().toString().isEmpty() || mName.getText().toString().length() == 0) {
             Toast.makeText(getApplicationContext(), "Enter the name", Toast.LENGTH_SHORT).show();
             return false;
-        }if(mRoll.getText().toString().isEmpty()||mRoll.getText().toString().length()==0){
-            Toast.makeText(getApplicationContext(), "Enter the roll no", Toast.LENGTH_SHORT).show();
-            return false;
-        }if(mAddres.getText().toString().isEmpty()||mAddres.getText().toString().length()==0){
+        }if (mAddres.getText().toString().isEmpty() || mAddres.getText().toString().length() == 0) {
             Toast.makeText(getApplicationContext(), "Enter the address", Toast.LENGTH_SHORT).show();
             return false;
-        }if(mPhone.getText().toString().isEmpty()||mPhone.getText().toString().length()==0){
+        }if (mPhone.getText().toString().isEmpty() || mPhone.getText().toString().length() == 0) {
             Toast.makeText(getApplicationContext(), "Enter the phone no", Toast.LENGTH_SHORT).show();
             return false;
-        }if(mClassname.getText().toString().isEmpty()||mClassname.getText().toString().length()==0){
-            Toast.makeText(getApplicationContext(), "Enter the class name", Toast.LENGTH_SHORT).show();
-            return false;
-        }if(mNfcId.getText().toString().equalsIgnoreCase(getResources().getString(R.string.entitynfcid))){
+        }if (mNfcId.getText().toString().equalsIgnoreCase(getResources().getString(R.string.entitynfcid))) {
             Toast.makeText(getApplicationContext(), "Scan the nfc tag", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.newEntitySave:
+                if (verifyFields()) {
+                    if (checkConnection()) {
+                        if(mImage!=null){
+                            mFileName = mNfcId.getText().toString() + ".jpg";
+                            new FileOperations(getApplicationContext()).saveImage(mFileName,mImage);
+                            new UploadImage(getApplicationContext(),mFileName).execute(new File(getExternalCacheDir(),mFileName));
+                        }
+                        if(getIntent().getExtras()==null){
+                            uploadToDatabase();
+                        }else {
+                            modifyInDatabase();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Check you internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            case R.id.newEntityImage:
+                chooseImageAction();
+                break;
+        }
+    }
+
+    private void modifyInDatabase() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, buildInsertUri(getResources().getString(R.string.urlUpdateEntity)), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                modifyInLocalDatabase();
+                finish();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue.add(stringRequest);
+    }
+
+    private void modifyInLocalDatabase(){
+        ContentValues cv = new ContentValues();
+        cv.put(TableNames.table1.mNfcId, mNfcId.getText().toString());
+        if(!mRoll.getText().toString().isEmpty()&&mRoll.getText().toString().length()!=0){
+            cv.put(TableNames.table1.mRoLLNumber, mRoll.getText().toString());
+        }
+        cv.put(TableNames.table1.mName, mName.getText().toString());
+        cv.put(TableNames.table1.mAddress, mAddres.getText().toString());
+        cv.put(TableNames.table1.mPhoneNo, mPhone.getText().toString());
+        if(!mClassname.getText().toString().isEmpty()&&mClassname.getText().toString().length()!=0) {
+            cv.put(TableNames.table1.mClass, mClassname.getText().toString());
+        }
+        if(mFileName!=null){
+            cv.put(TableNames.table1.mPhoto, mFileName);
+        }
+        getContentResolver().update(Uri.withAppendedPath(TableNames.mContentUri,mNfcId.getText().toString()), cv,null,null);
+    }
 }

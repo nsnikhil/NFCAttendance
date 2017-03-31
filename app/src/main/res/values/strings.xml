@@ -13,6 +13,10 @@
     <string name="dateYesterday">Yesterday</string>
     <!-- -->
 
+    <!-- intentExtra-->
+    <string name="intentExtraNfcId">intentExtraNfcId</string>
+    <!-- -->
+
     <!-- entityObject-->
     <string name="entityname">Name</string>
     <string name="entityaddress">Address</string>
@@ -67,6 +71,8 @@
     <string name="urlBucketHost">https://s3-ap-northeast-1.amazonaws.com/</string>
     <string name="urlBucketName">nfcattensnimages</string>
     <string name="urlInsertNew">insertNFCnew.php</string>
+    <string name="urlUpdateEntity">nfcUpdate.php</string>
+    <string name="urlNfcDelete">nfcDelete.php</string>
     <!-- -->
 
 
